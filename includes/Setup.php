@@ -143,7 +143,7 @@ final class Setup {
 	 * @since 3.0
 	 */
 	public static function isValid( $isCli = false ) {
-		return Installer::isGoodSchema( $isCli );
+		return true;
 	}
 
 	/**

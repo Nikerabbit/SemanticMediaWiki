@@ -46,7 +46,7 @@ class ExtensionSchemaUpdates {
 		$options = new Options(
 			[
 				Installer::OPT_SCHEMA_UPDATE => true,
-				Installer::OPT_TABLE_OPTIMIZE => true,
+				Installer::OPT_TABLE_OPTIMIZE => false,
 				Installer::OPT_IMPORT => true,
 				Installer::OPT_SUPPLEMENT_JOBS => true
 			]
