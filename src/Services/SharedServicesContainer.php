@@ -25,6 +25,8 @@ use SMW\MediaWiki\ManualEntryLogger;
 use SMW\MediaWiki\MediaWikiNsContentReader;
 use SMW\MediaWiki\PageCreator;
 use SMW\MediaWiki\PageUpdater;
+use SMW\MediaWiki\PermissionExaminer;
+use SMW\MediaWiki\PermissionManager;
 use SMW\MediaWiki\TitleFactory;
 use SMW\Query\Cache\ResultCache;
 use SMW\Services\DataValueServiceFactory;
@@ -650,6 +652,20 @@ class SharedServicesContainer implements CallbackContainer {
 		} );
 
 		/**
+		 * @var PermissionExaminer
+		 */
+		$containerBuilder->registerCallback( 'PermissionExaminer', function( $containerBuilder ) {
+			$containerBuilder->registerExpectedReturnType( 'PermissionExaminer', '\SMW\MediaWiki\PermissionExaminer' );
+
+			$permissionExaminer = new PermissionExaminer(
+				$containerBuilder->create( 'MediaWiki.PermissionManager' )
+			);
+
+			return $permissionExaminer;
+		} );
+
+
+		/**
 		 * @var ProtectionValidator
 		 */
 		$containerBuilder->registerCallback( 'ProtectionValidator', function( $containerBuilder ) {
@@ -657,7 +673,8 @@ class SharedServicesContainer implements CallbackContainer {
 
 			$protectionValidator = new ProtectionValidator(
 				$containerBuilder->singleton( 'Store', null ),
-				$containerBuilder->singleton( 'EntityCache' )
+				$containerBuilder->singleton( 'EntityCache' ),
+				$containerBuilder->singleton( 'PermissionExaminer' )
 			);
 
 			$protectionValidator->setEditProtectionRight(
@@ -682,12 +699,12 @@ class SharedServicesContainer implements CallbackContainer {
 			$containerBuilder->registerExpectedReturnType( 'PermissionManager', '\SMW\MediaWiki\PermissionManager' );
 
 			$permissionManager = new PermissionManager(
-				$containerBuilder->create( 'ProtectionValidator' )
+				$containerBuilder->create( 'ProtectionValidator' ),
+				$containerBuilder->singleton( 'PermissionExaminer' )
 			);
 
 			return $permissionManager;
 		} );
-
 
 		/**
 		 * @var EditProtectionUpdater
