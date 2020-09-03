@@ -33,7 +33,6 @@ use SMW\Services\DataValueServiceFactory;
 use SMW\MessageFormatter;
 use SMW\NamespaceExaminer;
 use SMW\Parser\LinksProcessor;
-use SMW\MediaWiki\PermissionManager;
 use SMW\ParserData;
 use SMW\PostProcHandler;
 use SMW\Property\AnnotatorFactory;
