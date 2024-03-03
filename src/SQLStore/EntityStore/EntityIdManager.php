@@ -61,7 +61,7 @@ use SMWDataItem as DataItem;
  */
 class EntityIdManager {
 
-	const MAX_CACHE_SIZE = 1000;
+	const MAX_CACHE_SIZE = 10000;
 	const POOLCACHE_ID = 'smw.sqlstore';
 
 	/**
