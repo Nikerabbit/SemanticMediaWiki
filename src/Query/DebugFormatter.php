@@ -62,7 +62,7 @@ class DebugFormatter {
 	 *
 	 * @return string
 	 */
-	public function getFormat() : string {
+	public function getFormat(): string {
 		return $this->format;
 	}
 
@@ -79,11 +79,10 @@ class DebugFormatter {
 	 * @return string
 	 */
 	public function buildHTML( array $entries, Query $query = null ) {
-
 		if ( $query instanceof Query ) {
 			$preEntries = [];
 			$description = $query->getDescription();
-			$queryString = str_replace( '[', '&#91;', $description->getQueryString() );
+			$queryString = str_replace( '[', '&#91;', $description->getQueryString() ?? '' );
 
 			$preEntries['ASK Query'] = '<div class="smwpre">' . $queryString . '</div>';
 			$entries = array_merge( $preEntries, $entries );
@@ -131,23 +130,22 @@ class DebugFormatter {
 	 * @return string
 	 */
 	public function prettifyExplain( iterable $res ) {
-
 		$output = '';
 
 		// https://dev.mysql.com/doc/refman/5.0/en/explain-output.html
 		if ( $this->type === 'mysql' ) {
 			$output .= '<div class="smwpre" style="word-break:normal;">' .
 			'<table class="" style="border-spacing: 5px;"><tr>' .
-			'<th style="text-align: left;">ID</th>'.
-			'<th style="text-align: left;">select_type</th>'.
-			'<th style="text-align: left;">table</th>'.
-			'<th style="text-align: left;">type</th>'.
-			'<th style="text-align: left;">possible_keys</th>'.
-			'<th style="text-align: left;">key</th>'.
-			'<th style="text-align: left;">key_len</th>'.
-			'<th style="text-align: left;">ref</th>'.
-			'<th style="text-align: left;">rows</th>'.
-			'<th style="text-align: left;">filtered</th>'.
+			'<th style="text-align: left;">ID</th>' .
+			'<th style="text-align: left;">select_type</th>' .
+			'<th style="text-align: left;">table</th>' .
+			'<th style="text-align: left;">type</th>' .
+			'<th style="text-align: left;">possible_keys</th>' .
+			'<th style="text-align: left;">key</th>' .
+			'<th style="text-align: left;">key_len</th>' .
+			'<th style="text-align: left;">ref</th>' .
+			'<th style="text-align: left;">rows</th>' .
+			'<th style="text-align: left;">filtered</th>' .
 			'<th style="text-align: left;">Extra</th></tr>';
 
 			foreach ( $res as $row ) {
@@ -163,14 +161,14 @@ class DebugFormatter {
 					$possible_keys = implode( ', ', explode( ',', $possible_keys ) );
 				}
 
-				if ( strpos( $ref, ',' ) !== false ) {
+				if ( strpos( $ref ?? '', ',' ) !== false ) {
 					$ref = implode( ', ', explode( ',', $ref ) );
 				}
 
 				$output .= "<tr style='vertical-align: top;'><td>" . $row->id .
 				"</td><td>" . $row->select_type .
 				"</td><td>" . $row->table .
-				"</td><td>" . $row->type  .
+				"</td><td>" . $row->type .
 				"</td><td>" . $possible_keys .
 				"</td><td>" . $row->key .
 				"</td><td>" . $row->key_len .
@@ -230,7 +228,6 @@ class DebugFormatter {
 	 * @return string
 	 */
 	public function prettifySPARQL( $sparql ) {
-
 		$sparql = str_replace(
 			[
 				'[',
@@ -246,7 +243,7 @@ class DebugFormatter {
 				'&#x3C;',
 				'&#x3E;'
 			],
-			$sparql
+			$sparql ?? ''
 		);
 
 		return '<div class="smwpre">' . $sparql . '</div>';
@@ -261,7 +258,6 @@ class DebugFormatter {
 	 * @return string
 	 */
 	public function prettifySQL( $sql, $alias ) {
-
 		$matches = [];
 		$i = 0;
 

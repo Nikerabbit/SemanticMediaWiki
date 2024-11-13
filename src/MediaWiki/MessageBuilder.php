@@ -100,6 +100,8 @@ class MessageBuilder {
 	 * @return string
 	 */
 	public function prevNextToText( Title $title, $limit, $offset, array $query, $isAtTheEnd ) {
+		$limit = (int) $limit;
+		$offset = (int) $offset;
 		if ( class_exists( PagerNavigationBuilder::class ) ) {
 			// MW > 1.39
 			$navBuilder = new PagerNavigationBuilder( RequestContext::getMain() );
@@ -107,7 +109,7 @@ class MessageBuilder {
 				->setPage( $title )
 				->setLinkQuery( [ 'limit' => $limit, 'offset' => $offset ] + $query )
 				->setLimitLinkQueryParam( 'limit' )
-				->setCurrentLimit( $limit )
+				->setCurrentLimit( (int) $limit )
 				->setPrevTooltipMsg( 'prevn-title' )
 				->setNextTooltipMsg( 'nextn-title' )
 				->setLimitTooltipMsg( 'shown-title' );
@@ -136,7 +138,6 @@ class MessageBuilder {
 	 * @return Message
 	 */
 	public function getMessage( $key ) {
-
 		$params = func_get_args();
 		array_shift( $params );
 
@@ -150,7 +151,6 @@ class MessageBuilder {
 	}
 
 	private function getLanguage() {
-
 		if ( $this->language instanceof Language ) {
 			return $this->language;
 		}

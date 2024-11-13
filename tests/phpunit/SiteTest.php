@@ -18,8 +18,18 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 
 	use PHPUnitCompat;
 
-	public function testIsReadOnly() {
+	protected function setUp(): void {
+        parent::setUp();
+        
+        // Mocking global job classes
+        $GLOBALS['wgJobClasses'] = [
+            'smw.indexer' => 'SMWIndexerJob',
+            'smw.updater' => 'SMWUpdaterJob',
+            // Add more mock job classes as necessary for your tests
+        ];
+    }
 
+	public function testIsReadOnly() {
 		$this->assertInternalType(
 			'boolean',
 			Site::isReadOnly()
@@ -27,7 +37,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testIsReady() {
-
 		$this->assertInternalType(
 			'boolean',
 			Site::isReady()
@@ -35,7 +44,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testName() {
-
 		$this->assertInternalType(
 			'string',
 			Site::name()
@@ -43,7 +51,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testWikiurl() {
-
 		$this->assertInternalType(
 			'string',
 			Site::wikiurl()
@@ -51,7 +58,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testLanguageCode() {
-
 		$this->assertInternalType(
 			'string',
 			Site::languageCode()
@@ -59,7 +65,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testIsCommandLineMode() {
-
 		$this->assertInternalType(
 			'boolean',
 			Site::isCommandLineMode()
@@ -67,7 +72,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testIsCapitalLinks() {
-
 		$this->assertInternalType(
 			'boolean',
 			Site::isCapitalLinks()
@@ -75,7 +79,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetCacheExpireTime() {
-
 		$this->assertInternalType(
 			'integer',
 			Site::getCacheExpireTime( 'parser' )
@@ -83,7 +86,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testStats() {
-
 		$this->assertInternalType(
 			'array',
 			Site::stats()
@@ -91,7 +93,6 @@ class SiteTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetJobClasses() {
-
 		$this->assertInternalType(
 			'array',
 			Site::getJobClasses()

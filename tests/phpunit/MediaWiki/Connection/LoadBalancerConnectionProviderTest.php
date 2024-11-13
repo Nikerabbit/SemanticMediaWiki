@@ -2,11 +2,11 @@
 
 namespace SMW\Tests\MediaWiki\Connection;
 
-use DatabaseBase;
 use ReflectionClass;
 use SMW\Tests\PHPUnitCompat;
 use SMW\MediaWiki\Connection\LoadBalancerConnectionProvider;
 use SMW\Tests\TestEnvironment;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * @covers \SMW\MediaWiki\Connection\LoadBalancerConnectionProvider
@@ -23,9 +23,8 @@ class LoadBalancerConnectionProviderTest extends \PHPUnit_Framework_TestCase {
 
 	private $loadBalancer;
 
-	protected function setUp() : void {
-
-		$this->loadBalancer = $this->getMockBuilder( '\LoadBalancer' )
+	protected function setUp(): void {
+		$this->loadBalancer = $this->getMockBuilder( ILoadBalancer::class )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -34,7 +33,6 @@ class LoadBalancerConnectionProviderTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCanConstruct() {
-
 		$this->assertInstanceOf(
 			LoadBalancerConnectionProvider::class,
 			new LoadBalancerConnectionProvider( DB_REPLICA )
@@ -42,8 +40,7 @@ class LoadBalancerConnectionProviderTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetAndReleaseConnection() {
-
-		$database = $this->getMockBuilder( '\IDatabase' )
+		$database = $this->getMockBuilder( '\Wikimedia\Rdbms\IDatabase' )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -55,40 +52,10 @@ class LoadBalancerConnectionProviderTest extends \PHPUnit_Framework_TestCase {
 			DB_REPLICA
 		);
 
-		$instance->asConnectionRef( false );
-
 		$connection = $instance->getConnection();
 
 		$this->assertInstanceOf(
-			'\IDatabase',
-			$instance->getConnection()
-		);
-
-		$this->assertTrue(
-			$instance->getConnection() === $connection
-		);
-
-		$instance->releaseConnection();
-	}
-
-	public function testGetAndReleaseConnectionRef() {
-
-		$database = $this->getMockBuilder( '\IDatabase' )
-			->disableOriginalConstructor()
-			->getMock();
-
-		$this->loadBalancer->expects( $this->once() )
-			->method( 'getConnectionRef' )
-			->will( $this->returnValue( $database ) );
-
-		$instance = new LoadBalancerConnectionProvider(
-			DB_REPLICA
-		);
-
-		$connection = $instance->getConnection();
-
-		$this->assertInstanceOf(
-			'\IDatabase',
+			'\Wikimedia\Rdbms\IDatabase',
 			$instance->getConnection()
 		);
 
@@ -100,8 +67,7 @@ class LoadBalancerConnectionProviderTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetInvalidConnectionFromLoadBalancerThrowsException() {
-
-		$loadBalancer = $this->getMockBuilder( '\LoadBalancer' )
+		$loadBalancer = $this->getMockBuilder( ILoadBalancer::class )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -114,7 +80,6 @@ class LoadBalancerConnectionProviderTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		$instance->setLoadBalancer( $loadBalancer );
-		$instance->asConnectionRef( false );
 
 		$this->expectException( 'RuntimeException' );
 		$instance->getConnection();

@@ -42,8 +42,7 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	 */
 	private static $handlers = [];
 
-	protected function setUp() : void {
-
+	protected function setUp(): void {
 		$this->testEnvironment = new TestEnvironment();
 
 		$user = $this->getMockBuilder( '\User' )
@@ -135,12 +134,11 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 		$this->testEnvironment->registerObject( 'PermissionManager', $permissionManager );
 	}
 
-	protected function tearDown() : void {
+	protected function tearDown(): void {
 		$this->testEnvironment->tearDown();
 	}
 
 	public function testCanConstruct() {
-
 		$vars = [];
 
 		$this->assertInstanceOf(
@@ -150,7 +148,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testRegisterExtensionCheck() {
-
 		$vars = [];
 
 		Hooks::registerExtensionCheck( $vars );
@@ -172,7 +169,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider callMethodProvider
 	 */
 	public function testRegister( $method ) {
-
 		$language = $this->getMockBuilder( '\Language' )
 			->disableOriginalConstructor()
 			->getMock();
@@ -193,7 +189,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
      * @depends testRegister
      */
 	public function testCheckOnMissingHandlers() {
-
 		$disabled = [
 			'PageSchemasRegisterHandlers',
 			'AdminLinks'
@@ -228,7 +223,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callMethodProvider() {
-
 		return [
 			[ 'callParserAfterTidy' ],
 			[ 'callSkinAfterContent' ],
@@ -288,7 +282,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 
 //SMW::Maintenance::AfterUpdateEntityCollationComplete
 	public function callParserAfterTidy( $instance ) {
-
 		$handler = 'ParserAfterTidy';
 
 		$this->title->expects( $this->any() )
@@ -314,7 +307,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSkinAfterContent( $instance ) {
-
 		$handler = 'SkinAfterContent';
 
 		$this->title->expects( $this->any() )
@@ -365,7 +357,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callOutputPageParserOutput( $instance ) {
-
 		$handler = 'OutputPageParserOutput';
 
 		$parserOutput = $this->getMockBuilder( '\ParserOutput' )
@@ -393,7 +384,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callBeforePageDisplay( $instance ) {
-
 		$handler = 'BeforePageDisplay';
 
 		$this->title->expects( $this->any() )
@@ -417,7 +407,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSpecialSearchResultsPrepend( $instance ) {
-
 		$handler = 'SpecialSearchResultsPrepend';
 
 		$specialSearch = $this->getMockBuilder( '\SpecialSearch' )
@@ -437,7 +426,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSpecialSearchProfiles( $instance ) {
-
 		$handler = 'SpecialSearchProfiles';
 
 		$this->assertTrue(
@@ -455,7 +443,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSpecialSearchProfileForm( $instance ) {
-
 		$handler = 'SpecialSearchProfileForm';
 
 		$this->store->expects( $this->any() )
@@ -512,7 +499,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callInternalParseBeforeLinks( $instance ) {
-
 		$handler = 'InternalParseBeforeLinks';
 
 		$this->title->expects( $this->any() )
@@ -550,7 +536,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callRevisionFromEditComplete( $instance ) {
-
 		$handler = 'RevisionFromEditComplete';
 
 		$contentHandler = $this->getMockBuilder( '\ContentHandler' )
@@ -612,7 +597,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callPageMoveComplete( $instance ) {
-
 		$handler = 'PageMoveComplete';
 
 		$store = $this->getMockBuilder( '\SMW\SQLStore\SQLStore' )
@@ -663,7 +647,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callArticleProtectComplete( $instance ) {
-
 		$handler = 'ArticleProtectComplete';
 
 		$contentHandler = $this->getMockBuilder( '\ContentHandler' )
@@ -732,7 +715,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callArticleViewHeader( $instance ) {
-
 		$handler = 'ArticleViewHeader';
 
 		$this->title->expects( $this->any() )
@@ -811,7 +793,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callArticlePurge( $instance ) {
-
 		$handler = 'ArticlePurge';
 
 		$wikiPage = $this->getMockBuilder( '\WikiPage' )
@@ -835,7 +816,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callArticleDelete( $instance ) {
-
 		$handler = 'ArticleDelete';
 
 		$semanticData = $this->getMockBuilder( '\SMW\SemanticData' )
@@ -894,7 +874,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callLinksUpdateComplete( $instance ) {
-
 		$handler = 'LinksUpdateComplete';
 
 		$idTable = $this->getMockBuilder( '\stdClass' )
@@ -946,7 +925,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSpecialStatsAddExtra( $instance ) {
-
 		$handler = 'SpecialStatsAddExtra';
 
 		$extraStats = [];
@@ -964,7 +942,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callFileUpload( $instance ) {
-
 		$handler = 'FileUpload';
 
 		$file = $this->getMockBuilder( '\File' )
@@ -986,7 +963,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callMaintenanceUpdateAddParams( $instance ) {
-
 		$handler = 'MaintenanceUpdateAddParams';
 
 		$this->assertTrue(
@@ -1004,7 +980,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callResourceLoaderGetConfigVars( $instance ) {
-
 		$handler = 'ResourceLoaderGetConfigVars';
 
 		$vars = [];
@@ -1022,24 +997,41 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callGetPreferences( $instance ) {
+		$schemaList = $this->getMockBuilder( '\SMW\Schema\SchemaList' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$schemaFinder = $this->getMockBuilder( '\SMW\Schema\SchemaFinder' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$schemaFinder->expects( $this->any() )
+			->method( 'getSchemaListByType' )
+			->will( $this->returnValue( $schemaList ) );
+
+		$schemaFactory = $this->getMockBuilder( '\SMW\Schema\SchemaFactory' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$schemaFactory->expects( $this->any() )
+			->method( 'newSchemaFinder' )
+			->will( $this->returnValue( $schemaFinder ) );
+
+		$this->testEnvironment->registerObject( 'SchemaFactory', $schemaFactory );
 
 		$handler = 'GetPreferences';
 
 		$user = $this->getMockBuilder( '\User' )
 			->disableOriginalConstructor()
 			->getMock();
-
 		$preferences = [];
-
 		$this->assertTrue(
 			$instance->isRegistered( $handler )
 		);
-
 		$this->assertThatHookIsExcutable(
 			$instance->getHandlerFor( $handler ),
 			[ $user, &$preferences ]
 		);
-
 		return $handler;
 	}
 
@@ -1091,7 +1083,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSkinTemplateNavigation( $instance ) {
-
 		$handler = 'SkinTemplateNavigation::Universal';
 
 		$user = $this->getMockBuilder( '\User' )
@@ -1121,7 +1112,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callLoadExtensionSchemaUpdates( $instance ) {
-
 		$handler = 'LoadExtensionSchemaUpdates';
 
 		$databaseUpdater = $this->getMockBuilder( '\DatabaseUpdater' )
@@ -1141,7 +1131,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callExtensionTypes( $instance ) {
-
 		$handler = 'ExtensionTypes';
 
 		$extTypes = [];
@@ -1159,7 +1148,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callTitleIsAlwaysKnown( $instance ) {
-
 		$handler = 'TitleIsAlwaysKnown';
 
 		$result = '';
@@ -1177,7 +1165,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callBeforeDisplayNoArticleText( $instance ) {
-
 		$handler = 'BeforeDisplayNoArticleText';
 
 		$article = $this->getMockBuilder( '\Article' )
@@ -1201,7 +1188,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callArticleFromTitle( $instance ) {
-
 		$handler = 'ArticleFromTitle';
 
 		$article = $this->getMockBuilder( '\Article' )
@@ -1218,14 +1204,13 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertThatHookIsExcutable(
 			$instance->getHandlerFor( $handler ),
-			[ &$this->title, &$article  ]
+			[ &$this->title, &$article ]
 		);
 
 		return $handler;
 	}
 
 	public function callTitleIsMovable( $instance ) {
-
 		$handler = 'TitleIsMovable';
 
 		$isMovable = '';
@@ -1236,14 +1221,13 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertThatHookIsExcutable(
 			$instance->getHandlerFor( $handler ),
-			[ $this->title, &$isMovable  ]
+			[ $this->title, &$isMovable ]
 		);
 
 		return $handler;
 	}
 
 	public function callContentHandlerForModelID( $instance ) {
-
 		$handler = 'ContentHandlerForModelID';
 
 		$this->assertTrue(
@@ -1255,14 +1239,13 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertThatHookIsExcutable(
 			$instance->getHandlerFor( $handler ),
-			[ $modelId, &$contentHandler  ]
+			[ $modelId, &$contentHandler ]
 		);
 
 		return $handler;
 	}
 
 	public function callEditPageForm( $instance ) {
-
 		$handler = 'EditPage::showEditForm:initial';
 
 		$title = Title::newFromText( 'Foo' );
@@ -1300,7 +1283,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callParserOptionsRegister( $instance ) {
-
 		$handler = 'ParserOptionsRegister';
 
 		$this->assertTrue(
@@ -1319,7 +1301,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callParserFirstCallInit( $instance ) {
-
 		$handler = 'ParserFirstCallInit';
 
 		$parser = $this->getMockBuilder( '\Parser' )
@@ -1343,7 +1324,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callTitleQuickPermissions( $instance ) {
-
 		$handler = 'TitleQuickPermissions';
 
 		$title = $this->title;
@@ -1370,7 +1350,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callOutputPageCheckLastModified( $instance ) {
-
 		$handler = 'OutputPageCheckLastModified';
 		$modifiedTimes = [];
 
@@ -1387,7 +1366,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callRejectParserCacheValue( $instance ) {
-
 		$handler = 'RejectParserCacheValue';
 
 		$this->title->expects( $this->any() )
@@ -1444,7 +1422,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSoftwareInfo( $instance ) {
-
 		$handler = 'SoftwareInfo';
 
 		$software = [];
@@ -1458,7 +1435,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callBlockIpComplete( $instance ) {
-
 		$handler = 'BlockIpComplete';
 
 		$block = $this->getMockBuilder( '\Block' )
@@ -1495,7 +1471,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callUnblockUserComplete( $instance ) {
-
 		$handler = 'UnblockUserComplete';
 
 		$block = $this->getMockBuilder( '\Block' )
@@ -1533,7 +1508,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callUserGroupsChanged( $instance ) {
-
 		$handler = 'UserGroupsChanged';
 
 		$user = $this->getMockBuilder( '\User' )
@@ -1557,7 +1531,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callDeleteAccount( $instance ) {
-
 		$handler = 'DeleteAccount';
 
 		$user = $this->getMockBuilder( '\User' )
@@ -1581,7 +1554,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWStoreDropTables( $instance ) {
-
 		$handler = 'SMW::Store::dropTables';
 
 		$verbose = false;
@@ -1595,7 +1567,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWSQLStoreEntityReferenceCleanUpComplete( $instance ) {
-
 		$handler = 'SMW::SQLStore::EntityReferenceCleanUpComplete';
 
 		if ( !$instance->getHandlerFor( $handler ) ) {
@@ -1615,7 +1586,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWAdminRegisterTaskHandlers( $instance ) {
-
 		$handler = 'SMW::Admin::RegisterTaskHandlers';
 
 		if ( !$instance->getHandlerFor( $handler ) ) {
@@ -1647,7 +1617,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWEventRegisterEventListeners( $instance ) {
-
 		$handler = 'SMW::Event::RegisterEventListeners';
 
 		if ( !$instance->getHandlerFor( $handler ) ) {
@@ -1667,7 +1636,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWSQLStorAfterDataUpdateComplete( $instance ) {
-
 		$handler = 'SMW::SQLStore::AfterDataUpdateComplete';
 
 		$connection = $this->getMockBuilder( '\SMW\MediaWiki\Database' )
@@ -1735,7 +1703,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWStoreBeforeQueryResultLookupComplete( $instance ) {
-
 		$handler = 'SMW::Store::BeforeQueryResultLookupComplete';
 
 		$query = $this->getMockBuilder( '\SMWQuery' )
@@ -1761,7 +1728,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWStoreAfterQueryResultLookupComplete( $instance ) {
-
 		$handler = 'SMW::Store::AfterQueryResultLookupComplete';
 
 		$idTableLookup = $this->getMockBuilder( '\stdClass' )
@@ -1792,7 +1758,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWBrowseAfterIncomingPropertiesLookupComplete( $instance ) {
-
 		$handler = 'SMW::Browse::AfterIncomingPropertiesLookupComplete';
 
 		$idTable = $this->getMockBuilder( '\stdClass' )
@@ -1841,7 +1806,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWBrowseBeforeIncomingPropertyValuesFurtherLinkCreate( $instance ) {
-
 		$handler = 'SMW::Browse::BeforeIncomingPropertyValuesFurtherLinkCreate';
 
 		$html = '';
@@ -1861,7 +1825,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWSQLStoreInstallerAfterCreateTablesComplete( $instance ) {
-
 		$handler = 'SMW::SQLStore::Installer::AfterCreateTablesComplete';
 
 		$result = '';
@@ -1891,7 +1854,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWMaintenanceAfterUpdateEntityCollationComplete( $instance ) {
-
 		$handler = 'SMW::Maintenance::AfterUpdateEntityCollationComplete';
 
 		$result = '';
@@ -1917,7 +1879,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function callSMWIndicatorEntityExaminerRegisterDeferrableIndicatorProviders( $instance ) {
-
 		$handler = 'SMW::Indicator::EntityExaminer::RegisterDeferrableIndicatorProviders';
 
 		$result = '';
@@ -1941,7 +1902,6 @@ class HooksTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	private function assertThatHookIsExcutable( callable $handler, $arguments ) {
-
 		$this->assertInternalType(
 			'boolean',
 			call_user_func_array( $handler, $arguments )

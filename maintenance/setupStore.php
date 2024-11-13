@@ -109,7 +109,7 @@ class setupStore extends \Maintenance {
 	 * @since 3.0
 	 */
 	public function getConnection() {
-		return $this->getDB( DB_MASTER );
+		return $this->getDB( DB_PRIMARY );
 	}
 
 	/**
@@ -118,7 +118,6 @@ class setupStore extends \Maintenance {
 	 * @since 2.0
 	 */
 	public function execute() {
-
 		if ( !Setup::isEnabled() ) {
 			$this->reportMessage( "\nYou need to have SMW enabled in order to run the maintenance script!\n" );
 			exit;
@@ -133,7 +132,7 @@ class setupStore extends \Maintenance {
 
 		// #2963 Use the Maintenance DB connection instead and the DB_ADMIN request
 		// to allow to use the admin user/pass, if set
-		$connectionManager->registerCallbackConnection( DB_MASTER, [ $this, 'getConnection' ] );
+		$connectionManager->registerCallbackConnection( DB_PRIMARY, [ $this, 'getConnection' ] );
 
 		$store->setConnectionManager(
 			$connectionManager
@@ -171,7 +170,6 @@ class setupStore extends \Maintenance {
 	}
 
 	protected function initMessageReporter() {
-
 		$messageReporterFactory = MessageReporterFactory::getInstance();
 
 		if ( $this->messageReporter === null && $this->getOption( 'quiet' ) ) {
@@ -210,7 +208,6 @@ class setupStore extends \Maintenance {
 	}
 
 	protected function dropStore( Store $store ) {
-
 		$cliMsgFormatter = new CliMsgFormatter();
 
 		if ( !$this->hasDeletionVerification() ) {
@@ -235,7 +232,6 @@ class setupStore extends \Maintenance {
 	 * @return boolean
 	 */
 	protected function hasDeletionVerification() {
-
 		$cliMsgFormatter = new CliMsgFormatter();
 
 		$this->messageReporter->reportMessage(

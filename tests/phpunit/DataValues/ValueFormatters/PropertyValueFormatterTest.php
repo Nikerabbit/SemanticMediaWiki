@@ -28,7 +28,7 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	private $propertySpecificationLookup;
 	private $dataValueServiceFactory;
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->testEnvironment = new TestEnvironment();
@@ -64,7 +64,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCanConstruct() {
-
 		$this->assertInstanceOf(
 			'\SMW\DataValues\ValueFormatters\PropertyValueFormatter',
 			new PropertyValueFormatter( $this->propertySpecificationLookup )
@@ -72,7 +71,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testIsFormatterForValidation() {
-
 		$propertyValue = $this->getMockBuilder( '\SMWPropertyValue' )
 			->disableOriginalConstructor()
 			->getMock();
@@ -87,7 +85,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testFormatWithInvalidFormat() {
-
 		$propertyValue = new PropertyValue();
 		$propertyValue->setDataItem( $this->dataItemFactory->newDIProperty( 'Foo' ) );
 		$propertyValue->setOption( PropertyValue::OPT_NO_HIGHLIGHT, true );
@@ -107,7 +104,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testFormatWithCaptionOutput() {
-
 		$propertyValue = new PropertyValue();
 		$propertyValue->setDataItem( $this->dataItemFactory->newDIProperty( 'Foo' ) );
 		$propertyValue->setCaption( 'ABC[<>]' );
@@ -132,9 +128,7 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
-
 	public function testFormatWithCaptionOutputAndHighlighter() {
-
 		$propertyValue = new PropertyValue();
 		$propertyValue->setOption( PropertyValue::OPT_NO_HIGHLIGHT, false );
 
@@ -164,7 +158,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider propertyValueProvider
 	 */
 	public function testFormat( $property, $type, $linker, $expected ) {
-
 		$propertyValue = new PropertyValue();
 		$propertyValue->setDataItem( $property );
 
@@ -195,7 +188,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider preferredLabelValueProvider
 	 */
 	public function testFormatWithPreferredLabel( $property, $preferredLabel, $type, $linker, $expected ) {
-
 		// Ensures the mocked instance is injected and registered with the
 		// PropertyRegistry instance
 		\SMW\PropertyRegistry::clear();
@@ -252,7 +244,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider preferredLabelAndCaptionValueProvider
 	 */
 	public function testFormatWithPreferredLabelAndCaption( $property, $caption, $preferredLabel, $type, $linker, $expected ) {
-
 		// Ensures the mocked instance is injected and registered with the
 		// PropertyRegistry instance
 		\SMW\PropertyRegistry::clear();
@@ -314,7 +305,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider formattedLabelProvider
 	 */
 	public function testFormattedLabelLabel( $property, $linker, $expected ) {
-
 		$propertyValue = new PropertyValue();
 
 		$propertyValue->setOption( PropertyValue::OPT_CONTENT_LANGUAGE, 'en' );
@@ -343,7 +333,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testTryToFormatOnMissingDataValueThrowsException() {
-
 		$instance = new PropertyValueFormatter(
 			$this->propertySpecificationLookup
 		);
@@ -353,7 +342,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function propertyValueProvider() {
-
 		$dataItemFactory = new DataItemFactory();
 
 		$provider[] = [
@@ -395,7 +383,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function preferredLabelValueProvider() {
-
 		$linker = 'some';
 
 		$provider[] = [
@@ -450,7 +437,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function preferredLabelAndCaptionValueProvider() {
-
 		$linker = 'some';
 
 		$provider[] = [
@@ -493,7 +479,6 @@ class PropertyValueFormatterTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function formattedLabelProvider() {
-
 		$property = $this->getMockBuilder( '\SMW\DIProperty' )
 			->disableOriginalConstructor()
 			->getMock();

@@ -10,6 +10,7 @@ use Wikimedia\Rdbms\FakeResultWrapper;
 use SMW\SQLStore\SQLStore;
 use SMW\Tests\TestEnvironment;
 use SMW\DIWikiPage;
+use Wikimedia\Rdbms\Database;
 
 /**
  * @covers \SMW\Maintenance\PurgeEntityCache
@@ -28,26 +29,24 @@ class PurgeEntityCacheTest extends TestCase {
 	private $connection;
 	private $entityCache;
 
-	protected function setUp() : void {
-
+	protected function setUp(): void {
 		$this->testEnvironment =  new TestEnvironment();
 
 		$this->messageReporter = $this->createMock( MessageReporter::class );
 		$this->store = $this->createMock( SQLStore::class );
-		$this->connection = $this->createMock( \Database::class );
+		$this->connection = $this->createMock( Database::class );
 		$this->entityCache = $this->createMock( EntityCache::class );
 
 		$this->testEnvironment->registerObject( 'Store', $this->store );
 		$this->testEnvironment->registerObject( 'EntityCache', $this->entityCache );
 	}
 
-	protected function tearDown() : void {
+	protected function tearDown(): void {
 		$this->testEnvironment->tearDown();
 		parent::tearDown();
 	}
 
 	public function testCanConstruct() {
-
 		$this->assertInstanceOf(
 			PurgeEntityCache::class,
 			new PurgeEntityCache()
@@ -55,7 +54,6 @@ class PurgeEntityCacheTest extends TestCase {
 	}
 
 	public function testExecute() {
-
 		$fields = [
 			"smw_subobject=''",
 			'smw_iw != '

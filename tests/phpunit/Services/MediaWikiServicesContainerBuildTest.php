@@ -3,6 +3,7 @@
 namespace SMW\Tests\Services;
 
 use Onoi\CallbackContainer\CallbackContainerFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * @group semantic-mediawiki
@@ -17,7 +18,7 @@ class MediaWikiServicesContainerBuildTest extends \PHPUnit_Framework_TestCase {
 	private $callbackContainerFactory;
 	private $servicesFileDir;
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->callbackContainerFactory = new CallbackContainerFactory();
@@ -28,7 +29,6 @@ class MediaWikiServicesContainerBuildTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider servicesProvider
 	 */
 	public function testCanConstruct( $service, $parameters, $expected ) {
-
 		array_unshift( $parameters, $service );
 
 		$containerBuilder = $this->callbackContainerFactory->newCallbackContainerBuilder();
@@ -41,7 +41,6 @@ class MediaWikiServicesContainerBuildTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function servicesProvider() {
-
 		$title = $this->getMockBuilder( '\Title' )
 			->disableOriginalConstructor()
 			->getMock();
@@ -58,7 +57,7 @@ class MediaWikiServicesContainerBuildTest extends \PHPUnit_Framework_TestCase {
 		$provider[] = [
 			'DBLoadBalancer',
 			[],
-			'\LoadBalancer'
+			ILoadBalancer::class
 		];
 
 /*

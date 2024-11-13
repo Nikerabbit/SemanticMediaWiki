@@ -2,7 +2,6 @@
 
 namespace SMW\MediaWiki\Hooks;
 
-use LinksUpdate;
 use SMW\Services\ServicesFactory as ApplicationFactory;
 use SMW\MediaWiki\RevisionGuardAwareTrait;
 use SMW\NamespaceExaminer;
@@ -68,12 +67,11 @@ class LinksUpdateComplete implements HookListener {
 	/**
 	 * @since 1.9
 	 *
-	 * @param LinksUpdate $linksUpdate
+	 * @param LinksUpdate|MediaWiki\Deferred\LinksUpdate\LinksUpdate $linksUpdate
 	 *
 	 * @return true
 	 */
-	public function process( LinksUpdate $linksUpdate ) {
-
+	public function process( $linksUpdate ) {
 		if ( $this->isReady === false ) {
 			return $this->doAbort();
 		}
@@ -131,7 +129,6 @@ class LinksUpdateComplete implements HookListener {
 	 * expect that an external process adheres the object contract
 	 */
 	private function updateSemanticData( &$parserData, $title, $reason = '' ) {
-
 		$this->logger->info(
 			[
 				'LinksUpdateConstructed',
@@ -148,7 +145,6 @@ class LinksUpdateComplete implements HookListener {
 	}
 
 	private function reparseAndFetchSemanticData( $title ) {
-
 		$contentParser = ApplicationFactory::getInstance()->newContentParser( $title );
 		$parserOutput = $contentParser->parse()->getOutput();
 
@@ -160,7 +156,6 @@ class LinksUpdateComplete implements HookListener {
 	}
 
 	private function doAbort() {
-
 		$this->logger->info(
 			"LinksUpdateConstructed was invoked but the site isn't ready yet, aborting the processing."
 		);

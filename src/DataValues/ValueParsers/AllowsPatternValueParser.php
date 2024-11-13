@@ -51,7 +51,6 @@ class AllowsPatternValueParser implements ValueParser {
 	 * @return string|false
 	 */
 	public function parse( $userValue ) {
-
 		$this->errors = [];
 
 		$contentList = $this->doParseContent(
@@ -66,13 +65,13 @@ class AllowsPatternValueParser implements ValueParser {
 	}
 
 	private function doParseContent( $contents ) {
-
 		$list = [];
 
 		if ( $contents === '' ) {
 			return null;
 		}
 
+		$contents = $contents ?? '';
 		$parts = array_map( 'trim', preg_split( "([\n][\s]?)", $contents ) );
 
 		// Get definition from first line

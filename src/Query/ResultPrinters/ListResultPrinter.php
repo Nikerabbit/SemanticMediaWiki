@@ -74,7 +74,6 @@ class ListResultPrinter extends ResultPrinter {
 	 * @return ListResultBuilder
 	 */
 	private function getBuilder( SMWQueryResult $queryResult ) {
-
 		$builder = new ListResultBuilder( $queryResult, $this->mLinker, $GLOBALS['smwgPlainList'] );
 
 		$builder->set( $this->params );
@@ -99,7 +98,6 @@ class ListResultPrinter extends ResultPrinter {
 		return $this->params['template'] !== '' || $this->params['introtemplate'] !== '' || $this->params['outrotemplate'] !== '';
 	}
 
-
 	/**
 	 * Get text for further results link. Used only during getResultText().
 	 *
@@ -111,7 +109,6 @@ class ListResultPrinter extends ResultPrinter {
 	 * @return string
 	 */
 	private function getFurtherResultsText( SMWQueryResult $res, $outputMode ) {
-
 		if ( $this->linkFurtherResults( $res ) ) {
 
 			$link = $this->getFurtherResultsLink( $res, $outputMode );
@@ -142,7 +139,6 @@ class ListResultPrinter extends ResultPrinter {
 	 * @throws \Exception
 	 */
 	public function getParamDefinitions( array $definitions ) {
-
 		$listFormatDefinitions = [
 
 			'propsep' => [

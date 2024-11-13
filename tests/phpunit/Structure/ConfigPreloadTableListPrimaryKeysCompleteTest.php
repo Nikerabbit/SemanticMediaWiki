@@ -20,7 +20,6 @@ class ConfigPreloadTableListPrimaryKeysCompleteTest extends \PHPUnit_Framework_T
 	const FILENAME = 'db-primary-keys.php';
 
 	public function testCheckTableList() {
-
 		$store = ServicesFactory::getInstance()->getStore( SQLStore::class );
 		$file = $GLOBALS['smwgDir'] . '/data/config/' . self::FILENAME;
 
@@ -34,7 +33,7 @@ class ConfigPreloadTableListPrimaryKeysCompleteTest extends \PHPUnit_Framework_T
 		$tableKeys = $reflectionClass->getConstant( 'PRIMARY_KEYS' );
 
 		$unlistedTables = [];
-		$connection = $store->getConnection( DB_MASTER );
+		$connection = $store->getConnection( DB_PRIMARY );
 
 		$tableSchemaManager = new TableSchemaManager(
 			$store

@@ -16,6 +16,7 @@ use SMWDataItem as DataItem;
 use SMWQuery as Query;
 use SMWQueryResult as QueryResult;
 use SMWSQLStore3 as SQLStore;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
  * Class that implements query answering for SQLStore.
@@ -148,7 +149,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	 * @return mixed depends on $query->querymode
 	 */
 	public function getQueryResult( Query $query ) {
-
 		if ( ( !$this->engineOptions->get( 'smwgIgnoreQueryErrors' ) || $query->getDescription() instanceof ThingDescription ) &&
 		     $query->querymode != Query::MODE_DEBUG &&
 		     count( $query->getErrors() ) > 0 ) {
@@ -242,7 +242,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	 * @return string
 	 */
 	private function getDebugQueryResult( Query $query, $rootid ) {
-
 		$qobj = $this->querySegmentList[$rootid] ?? 0;
 		$entries = [];
 
@@ -278,7 +277,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	}
 
 	private function doExecuteDebugQueryResult( $debugFormatter, $qobj, $sqlOptions, &$entries ) {
-
 		if ( !isset( $qobj->joinfield ) || $qobj->joinfield === '' ) {
 			return $entries['SQL Query'] = 'Empty result, no SQL query created.';
 		}
@@ -310,7 +308,7 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 			$query = "EXPLAIN $format $sql";
 		}
 
-		$res = $connection->query( $query, __METHOD__ );
+		$res = $connection->query( $query, __METHOD__, ISQLPlatform::QUERY_CHANGE_NONE );
 
 		$entries['SQL Explain'] = $debugFormatter->prettifyExplain( new ResultIterator( $res ) );
 		$entries['SQL Query'] = $debugFormatter->prettifySQL( $sql, $qobj->alias );
@@ -328,7 +326,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	 * @return integer
 	 */
 	private function getCountQueryResult( Query $query, $rootid ) {
-
 		$queryResult = $this->queryFactory->newQueryResult(
 			$this->store,
 			$query,
@@ -349,11 +346,15 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 		$sql_options = [ 'LIMIT' => $query->getLimit() + 1, 'OFFSET' => $query->getOffset() ];
 
 		$res = $connection->select(
-			$connection->tableName( $qobj->joinTable ) . " AS $qobj->alias" . $qobj->from,
-			"COUNT(DISTINCT $qobj->alias.smw_id) AS count",
+			array_merge(
+				[ $qobj->alias => $qobj->joinTable ],
+				$qobj->fromTables
+			),
+			[ 'count' => "COUNT(DISTINCT $qobj->alias.smw_id)" ],
 			$qobj->where,
 			__METHOD__,
-			$sql_options
+			$sql_options,
+			$qobj->joinConditions
 		);
 
 		$row = $res->fetchObject();
@@ -390,7 +391,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	 * @return QueryResult
 	 */
 	private function getInstanceQueryResult( Query $query, $rootid ) {
-
 		$connection = $this->store->getConnection( 'mw.db.queryengine' );
 		$qobj = $this->querySegmentList[$rootid];
 
@@ -405,24 +405,28 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 		}
 
 		$sql_options = $this->getSQLOptions( $query, $rootid );
-
-		// Selecting those is required in standard SQL (but MySQL does not require it).
-		$sortfields = implode( ',', $qobj->sortfields );
-		$sortfields = $sortfields ? ',' . $sortfields : '';
+		$sql_options[] = 'DISTINCT';
 
 		$res = $connection->select(
-			$connection->tableName( $qobj->joinTable ) . " AS $qobj->alias" . $qobj->from,
-			"DISTINCT " .
-			"$qobj->alias.smw_id AS id," .
-			"$qobj->alias.smw_title AS t," .
-			"$qobj->alias.smw_namespace AS ns," .
-			"$qobj->alias.smw_iw AS iw," .
-			"$qobj->alias.smw_subobject AS so," .
-			"$qobj->alias.smw_sortkey AS sortkey" .
-			"$sortfields",
+			array_merge(
+				[ $qobj->alias => $qobj->joinTable ],
+				$qobj->fromTables
+			),
+			array_merge(
+				[
+					'id' => "$qobj->alias.smw_id",
+					't' => "$qobj->alias.smw_title",
+					'ns' => "$qobj->alias.smw_namespace",
+					'iw' => "$qobj->alias.smw_iw",
+					'so' => "$qobj->alias.smw_subobject",
+					'sortkey' => "$qobj->alias.smw_sortkey",
+				],
+				array_values( $qobj->sortfields ) # TODO strange to only keep values, but it was like that before rewriting select() with arrays
+			),
 			$qobj->where,
 			__METHOD__,
-			$sql_options
+			$sql_options,
+			$qobj->joinConditions
 		);
 
 		$results = [];
@@ -504,7 +508,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	}
 
 	private function applyExtraWhereCondition( $connection, $qid ) {
-
 		if ( !isset( $this->querySegmentList[$qid] ) ) {
 			return null;
 		}
@@ -537,7 +540,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	 * @return array
 	 */
 	private function getSQLOptions( Query $query, $rootId ) {
-
 		$result = [
 			'LIMIT' => $query->getLimit() + 5,
 			'OFFSET' => $query->getOffset()
@@ -575,7 +577,6 @@ class QueryEngine implements QueryEngineInterface, LoggerAwareInterface {
 	}
 
 	private function log( $message, $context = [] ) {
-
 		if ( $this->logger === null ) {
 			return;
 		}

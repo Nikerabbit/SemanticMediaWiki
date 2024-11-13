@@ -37,7 +37,6 @@ class SMWQueryProcessorTest extends DatabaseTestCase {
 	* @dataProvider resultAliasDataProvider
 	*/
 	public function testGetResultPrinter_MatchAlias( $alias ) {
-
 		$this->assertInstanceOf(
 			'\SMW\Query\ResultPrinter',
 			SMWQueryProcessor::getResultPrinter( $alias )
@@ -45,7 +44,6 @@ class SMWQueryProcessorTest extends DatabaseTestCase {
 	}
 
 	public function resultAliasDataProvider() {
-
 		foreach ( $GLOBALS['smwgResultAliases'] as $format => $aliases ) {
 			foreach ( $aliases as $alias ) {
 				yield [ $alias ];
@@ -54,11 +52,9 @@ class SMWQueryProcessorTest extends DatabaseTestCase {
 	}
 	
 	public function testGetResultPrinter_ThrowsException() {
-
 		$this->expectException( '\SMW\Query\Exception\ResultFormatNotFoundException' );
 		SMWQueryProcessor::getResultPrinter( 'unknown_format' );
 	}
-	
 
 	/**
 	* @dataProvider createQueryDataProvider
@@ -90,7 +86,6 @@ class SMWQueryProcessorTest extends DatabaseTestCase {
 	 * @dataProvider rawParamsProvider
 	 */
 	public function testQuerStringFromRawParameters( $rawParams, $expected ) {
-
 		list( $queryString, $parameters, $printouts ) = SMWQueryProcessor::getComponentsFromFunctionParams( $rawParams, false );
 
 		$this->assertEquals(
@@ -100,7 +95,6 @@ class SMWQueryProcessorTest extends DatabaseTestCase {
 	}
 
 	public function rawParamsProvider() {
-
 		$provider[] = [
 			[ 'Foo', 'bar' ],
 			'Foobar'

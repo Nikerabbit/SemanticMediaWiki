@@ -19,7 +19,6 @@ class HtmlTabsTest extends \PHPUnit_Framework_TestCase {
 	use PHPUnitCompat;
 
 	public function testHasContents() {
-
 		$instance = new HtmlTabs();
 
 		$this->assertInternalType(
@@ -29,7 +28,6 @@ class HtmlTabsTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testTab_Contents() {
-
 		$instance = new HtmlTabs();
 		$instance->setActiveTab( 'foo' );
 		$instance->tab( 'foo', 'FOO' );
@@ -39,14 +37,13 @@ class HtmlTabsTest extends \PHPUnit_Framework_TestCase {
 			'<div class="smw-tabs foo-bar">' .
 			'<input id="tab-foo" class="nav-tab" type="radio" name="tabs" checked=""/>' .
 			'<label id="tab-label-foo" for="tab-foo" class="nav-label">FOO</label>' .
-			'<section id="tab-content-foo">< ... bar ... ></section>'.
+			'<section id="tab-content-foo">< ... bar ... ></section>' .
 			'</div>',
 			$instance->buildHTML( [ 'class' => 'foo-bar' ] )
 		);
 	}
 
 	public function testTab_Contents_Subtab() {
-
 		$instance = new HtmlTabs();
 		$instance->setActiveTab( 'foo' );
 		$instance->isSubTab();
@@ -67,7 +64,6 @@ class HtmlTabsTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testTab_Contents_AutoChecked() {
-
 		$instance = new HtmlTabs();
 		$instance->tab( 'foo', 'FOO' );
 		$instance->content( 'foo', '< ... bar ... >' );
@@ -76,14 +72,13 @@ class HtmlTabsTest extends \PHPUnit_Framework_TestCase {
 			'<div class="smw-tabs foo-bar">' .
 			'<input id="tab-foo" class="nav-tab" type="radio" name="tabs" checked=""/>' .
 			'<label id="tab-label-foo" for="tab-foo" class="nav-label">FOO</label>' .
-			'<section id="tab-content-foo">< ... bar ... ></section>'.
+			'<section id="tab-content-foo">< ... bar ... ></section>' .
 			'</div>',
 			$instance->buildHTML( [ 'class' => 'foo-bar' ] )
 		);
 	}
 
 	public function testTab_Contents_Hidden() {
-
 		$instance = new HtmlTabs();
 
 		$instance->tab( 'foo', 'FOO', [ 'hide' => true ] );
@@ -96,7 +91,6 @@ class HtmlTabsTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testTab_WithExtraHtml() {
-
 		$instance = new HtmlTabs();
 
 		$instance->tab( 'foo', 'FOO' );
@@ -110,7 +104,6 @@ class HtmlTabsTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testIsRTL() {
-
 		$instance = new HtmlTabs();
 		$instance->isRTL( true );
 

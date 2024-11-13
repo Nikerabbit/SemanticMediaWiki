@@ -188,7 +188,6 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addParagraph( $text, $attributes = [] ) {
-
 		if ( $attributes === [] ) {
 			$attributes = [ 'class' => $this->defaultPrefix . '-paragraph' ];
 		}
@@ -205,7 +204,6 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addHorizontalRule( $attributes = [] ) {
-
 		if ( $attributes === [] ) {
 			$attributes = [ 'class' => $this->defaultPrefix . '-horizontalrule' ];
 		}
@@ -223,7 +221,6 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addHeader( $level, $text, $attributes = [] ) {
-
 		$level = strtolower( $level );
 		$level = in_array( $level, [ 'h2', 'h3', 'h4' ] ) ? $level : 'h2';
 
@@ -302,7 +299,6 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addInputField( $label, $name, $value, $id = null, $size = 20, array $attributes = [] ) {
-
 		if ( $id === null ) {
 			$id = $name;
 		}
@@ -330,7 +326,6 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addHiddenField( $inputName, $inputValue ) {
-
 		$this->addQueryParameter( $inputName, $inputValue );
 
 		$this->content[] = Html::hidden( $inputName, $inputValue );
@@ -349,7 +344,6 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addOptionSelectList( $label, $inputName, $inputValue, $options, $id = null ) {
-
 		if ( $id === null ) {
 			$id = $inputName;
 		}
@@ -398,7 +392,6 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addCheckbox( $label, $inputName, $inputValue, $isChecked = false, $id = null, $attributes = [] ) {
-
 		if ( $id === null ) {
 			$id = $inputName;
 		}
@@ -435,18 +428,16 @@ class HtmlFormRenderer {
 	 * @return HtmlFormRenderer
 	 */
 	public function addPaging( $limit, $offset, $count, $messageCount = null ) {
-
 		$title = $this->title;
 
-		$this->content[] = function( $instance ) use ( $title, $limit, $offset, $count, $messageCount ) {
-
+		$this->content[] = function ( $instance ) use ( $title, $limit, $offset, $count, $messageCount ) {
 			if ( $messageCount === null ) {
 				$messageCount = ( $count > $limit ? $count - 1 : $count );
 			}
 
 			$resultCount = $instance->getMessageBuilder()
 				->getMessage( 'showingresults' )
-				->numParams( $messageCount, $offset + 1 )
+				->numParams( $messageCount, (int) $offset + 1 )
 				->parse();
 
 			$paging = $instance->getMessageBuilder()->prevNextToText(
@@ -469,7 +460,6 @@ class HtmlFormRenderer {
 	 * @return string
 	 */
 	public function getForm() {
-
 		$content = '';
 
 		foreach ( $this->content as $value ) {
@@ -493,7 +483,7 @@ class HtmlFormRenderer {
 			'action' => htmlspecialchars( $this->actionUrl ? $this->actionUrl : $GLOBALS['wgScript'] )
 		], Html::hidden(
 			'title',
-			strtok( $this->title->getPrefixedText(), '/' )
+			strtok( $this->title->getPrefixedText() ?? '', '/' )
 		) . $content );
 
 		$this->clear();

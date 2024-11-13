@@ -88,7 +88,6 @@ class MwCollaboratorFactory {
 	 * @return HtmlFormRenderer
 	 */
 	public function newHtmlFormRenderer( Title $title, Language $language = null ) {
-
 		if ( $language === null ) {
 			$language = $title->getPageLanguage();
 		}
@@ -119,16 +118,16 @@ class MwCollaboratorFactory {
 	/**
 	 * @since 2.1
 	 *
+	 * @param int $connectionType
+	 * @param bool $asConnectionRef Deprecated parameter since 5.0
+	 *
+	 * @note The parameter $asConnectionRef is deprecated since 5.0
+	 *
 	 * @return LoadBalancerConnectionProvider
 	 */
 	public function newLoadBalancerConnectionProvider( $connectionType, $asConnectionRef = true ) {
-
 		$loadBalancerConnectionProvider = new LoadBalancerConnectionProvider(
 			$connectionType
-		);
-
-		$loadBalancerConnectionProvider->asConnectionRef(
-			$asConnectionRef
 		);
 
 		return $loadBalancerConnectionProvider;
@@ -142,7 +141,6 @@ class MwCollaboratorFactory {
 	 * @return ConnectionProvider
 	 */
 	public function newConnectionProvider( $provider = null ) {
-
 		$connectionProvider = new ConnectionProvider(
 			$provider
 		);
@@ -270,7 +268,6 @@ class MwCollaboratorFactory {
 	 * @return StripMarkerDecoder
 	 */
 	public function newStripMarkerDecoder( StripState $stripState ) {
-
 		$stripMarkerDecoder = new StripMarkerDecoder(
 			$stripState
 		);

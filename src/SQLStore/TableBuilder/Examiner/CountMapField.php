@@ -53,14 +53,13 @@ class CountMapField {
 	 * @param array $log
 	 */
 	public function check( array $log = [] ) {
-
 		$cliMsgFormatter = new CliMsgFormatter();
 
 		$this->messageReporter->reportMessage(
 			$cliMsgFormatter->firstCol( "Checking smw_countmap field consistency ..." )
 		);
 
-		$connection = $this->store->getConnection( DB_MASTER );
+		$connection = $this->store->getConnection( DB_PRIMARY );
 		$tableName = $connection->tableName( SQLStore::ID_AUXILIARY_TABLE );
 
 		if (

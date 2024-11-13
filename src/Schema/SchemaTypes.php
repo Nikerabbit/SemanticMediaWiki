@@ -47,6 +47,11 @@ class SchemaTypes implements JsonSerializable {
 			'validation_schema' => 'search-form-schema.v1.json',
 			'type_description' => 'smw-schema-description-search-form-schema'
 		],
+		'FACETEDSEARCH_PROFILE_SCHEMA' => [
+			'group' => SMW_SCHEMA_GROUP_SEARCH,
+			'validation_schema' => 'facetedsearch-profile-schema.v1.json',
+			'type_description' => 'smw-schema-description-facetedsearch-profile-schema'
+		],
 		'PROPERTY_GROUP_SCHEMA' => [
 			'group' => SMW_SCHEMA_GROUP_PROPERTY,
 			'validation_schema' => 'property-group-schema.v1.json',
@@ -91,7 +96,7 @@ class SchemaTypes implements JsonSerializable {
 	 *
 	 * @return string
 	 */
-	public function withDir( string $dir = '' ) : string {
+	public function withDir( string $dir = '' ): string {
 		return str_replace( [ '\\', '//', '/', '\\\\' ], DIRECTORY_SEPARATOR, "{$this->dir}/$dir" );
 	}
 
@@ -101,7 +106,6 @@ class SchemaTypes implements JsonSerializable {
 	 * @param array $schemaTypes
 	 */
 	public function registerSchemaTypes( array $schemaTypes = [] ) {
-
 		if ( $this->onRegisterSchemaTypes ) {
 			return;
 		}
@@ -132,7 +136,6 @@ class SchemaTypes implements JsonSerializable {
 	 * @throws SchemaTypeAlreadyExistsException
 	 */
 	public function registerSchemaType( string $type, array $params ) {
-
 		if ( isset( $this->schemaTypes[$type] ) ) {
 			throw new SchemaTypeAlreadyExistsException( $type );
 		}
@@ -147,7 +150,7 @@ class SchemaTypes implements JsonSerializable {
 	 *
 	 * @return []
 	 */
-	public function getType( string $type ) : array {
+	public function getType( string $type ): array {
 		return $this->schemaTypes[$type] ?? [];
 	}
 
@@ -158,7 +161,7 @@ class SchemaTypes implements JsonSerializable {
 	 *
 	 * @return boolean
 	 */
-	public function isRegisteredType( ?string $type ) : bool {
+	public function isRegisteredType( ?string $type ): bool {
 		return isset( $this->schemaTypes[$type] );
 	}
 
@@ -167,7 +170,7 @@ class SchemaTypes implements JsonSerializable {
 	 *
 	 * @return []
 	 */
-	public function getRegisteredTypes() : array {
+	public function getRegisteredTypes(): array {
 		return array_keys( $this->schemaTypes );
 	}
 
@@ -178,8 +181,7 @@ class SchemaTypes implements JsonSerializable {
 	 *
 	 * @return []
 	 */
-	public function getRegisteredTypesByGroup( string $group ) : array {
-
+	public function getRegisteredTypesByGroup( string $group ): array {
 		$registeredTypes = [];
 		$groups = (array)$group;
 

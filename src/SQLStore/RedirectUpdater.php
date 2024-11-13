@@ -15,6 +15,7 @@ use SMW\SQLStore\EntityStore\IdChanger;
 use SMW\SQLStore\EntityStore\CachingSemanticDataLookup;
 use SMW\Listener\ChangeListener\ChangeRecord;
 use Title;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
  * @license GNU GPL v2+
@@ -88,7 +89,6 @@ class RedirectUpdater {
 	 * @param ChangeRecord $changeRecord
 	 */
 	public function applyChangesFromListener( string $key, ChangeRecord $changeRecord ) {
-
 		if ( $key === 'smwgQEqualitySupport' ) {
 			$this->setEqualitySupport( $changeRecord->get( $key ) );
 		}
@@ -108,7 +108,6 @@ class RedirectUpdater {
 	 * @param integer $newnamespace
 	 */
 	public function moveSubobjects( $source, $oldnamespace, $target, $newnamespace ) {
-
 		$idTable = $this->store->getObjectIds();
 
 		// Currently we have no way to change title and namespace across all entries.
@@ -150,7 +149,6 @@ class RedirectUpdater {
 	 * @param integer $redirectId
 	 */
 	public function doUpdate( DIWikiPage $source, DIWikiPage $target, array $options ) {
-
 		$idTable = $this->store->getObjectIds();
 		$this->lookupCache = [];
 
@@ -198,7 +196,6 @@ class RedirectUpdater {
 	 * @param array $options
 	 */
 	public function triggerChangeTitleUpdate( Title $source, Title $target, array $options ) {
-
 		if ( $options['redirect_id'] == 0 ) {
 			$source = null;
 		}
@@ -213,8 +210,7 @@ class RedirectUpdater {
 	 *
 	 * @return boolean
 	 */
-	public function shouldCleanUpAnnotationsAndRedirects( array $redirects = [] ) : bool {
-
+	public function shouldCleanUpAnnotationsAndRedirects( array $redirects = [] ): bool {
 		if ( $redirects === [] ) {
 			return false;
 		}
@@ -238,7 +234,6 @@ class RedirectUpdater {
 	 * @param DIWikiPage $subject
 	 */
 	public function discardRemnantRedirects( DIWikiPage $subject ) {
-
 		$entityIdManager = $this->store->getObjectIds();
 		$target_id = 0;
 
@@ -289,7 +284,6 @@ class RedirectUpdater {
 	 * @return integer the new canonical ID of the subject
 	 */
 	public function updateRedirects( DIWikiPage $source, DIWikiPage $target = null ) {
-
 		// Track count changes for redi property
 		$count = 0;
 
@@ -472,7 +466,6 @@ class RedirectUpdater {
 	}
 
 	private function updateTarget( $source, $target, &$sid ) {
-
 		$connection = $this->store->getConnection( 'mw.db' );
 		$idTable = $this->store->getObjectIds();
 
@@ -559,7 +552,6 @@ class RedirectUpdater {
 	}
 
 	private function moveAsRedirect( $source, $target, $sid, $tid, $options ) {
-
 		$connection = $this->store->getConnection( 'mw.db' );
 		$idTable = $this->store->getObjectIds();
 
@@ -594,7 +586,7 @@ class RedirectUpdater {
 			'smw_iw = ' . $connection->addQuotes( '' ) . ' AND ' .
 			'smw_subobject != ' . $connection->addQuotes( '' ); // The "!=" is why we cannot use MW array syntax here
 
-		$connection->query( $sql, __METHOD__ );
+		$connection->query( $sql, __METHOD__, ISQLPlatform::QUERY_CHANGE_ROWS );
 
 		$this->moveSubobjects(
 			$source->getDBkey(),

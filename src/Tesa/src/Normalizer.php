@@ -60,7 +60,6 @@ class Normalizer {
 		return str_replace( $full, $half, trim( $text ) );
 	}
 
-
 	/**
 	 * @since 0.1
 	 *
@@ -81,7 +80,6 @@ class Normalizer {
 	 * @return string
 	 */
 	public static function reduceLengthTo( $text, $length = null ) {
-
 		if ( $length === null || mb_strlen( $text ) <= $length ) {
 			return $text;
 		}

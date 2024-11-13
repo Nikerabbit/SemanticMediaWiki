@@ -2,7 +2,6 @@
 
 namespace SMW\MediaWiki\Search;
 
-use DatabaseBase;
 use RuntimeException;
 use SearchEngine;
 use SMW\Services\ServicesFactory as ApplicationFactory;
@@ -10,6 +9,7 @@ use SMW\MediaWiki\Search\Exception\SearchDatabaseInvalidTypeException;
 use SMW\MediaWiki\Search\Exception\SearchEngineInvalidTypeException;
 use SMW\MediaWiki\Search\ProfileForm\ProfileForm;
 use SMW\Exception\ClassNotFoundException;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * @license GNU GPL v2+
@@ -22,13 +22,12 @@ class SearchEngineFactory {
 	/**
 	 * @since 3.1
 	 *
-	 * @param \DatabaseBase $connection
+	 * @param IDatabase $connection
 	 *
 	 * @return SearchEngine
 	 * @throws SearchEngineInvalidTypeException
 	 */
-	public function newFallbackSearchEngine( DatabaseBase $connection = null ) {
-
+	public function newFallbackSearchEngine( IDatabase $connection = null ) {
 		$applicationFactory = ApplicationFactory::getInstance();
 		$settings = $applicationFactory->getSettings();
 
@@ -68,7 +67,6 @@ class SearchEngineFactory {
 	 * @return ExtendedSearch
 	 */
 	public function newExtendedSearch( \SearchEngine $fallbackSearchEngine ) {
-
 		$applicationFactory = ApplicationFactory::getInstance();
 		$searchEngineConfig = $applicationFactory->create( 'SearchEngineConfig' );
 
@@ -94,7 +92,6 @@ class SearchEngineFactory {
 	 * @param $type
 	 */
 	private function isValidSearchDatabaseType( $type ) {
-
 		if ( !class_exists( $type ) ) {
 			throw new ClassNotFoundException( "$type does not exist." );
 		}

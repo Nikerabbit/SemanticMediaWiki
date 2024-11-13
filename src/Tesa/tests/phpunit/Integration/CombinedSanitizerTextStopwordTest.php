@@ -19,7 +19,6 @@ class CombinedSanitizerTextStopwordTest extends TestCase {
 	 * @dataProvider textByLanguageProvider
 	 */
 	public function testByLanguage( $languageCode, $text, $expected ) {
-
 		$sanitizerFactory = new SanitizerFactory();
 
 		$sanitizer = $sanitizerFactory->newSanitizer( $text );
@@ -38,7 +37,6 @@ class CombinedSanitizerTextStopwordTest extends TestCase {
 	}
 
 	public function textByLanguageProvider() {
-
 		// https://en.wikipedia.org/wiki/Stop_words
 		$provider[] = array(
 			'en',
@@ -46,7 +44,7 @@ class CombinedSanitizerTextStopwordTest extends TestCase {
 			'In computing, stop words are words which are filtered out before or after processing of ' .
 			'natural language data (text).[1] Though stop words usually refer to the most common words ' .
 			'in a language, there is no single universal list of stop words used by all natural language ' .
-			'processing tools, and indeed not all tools even use such a list. Some tools specifically avoid '.
+			'processing tools, and indeed not all tools even use such a list. Some tools specifically avoid ' .
 			'removing these stop words to support phrase search.',
 			//
 			'computing stop words filtered processing natural language data text stop words refer common ' .

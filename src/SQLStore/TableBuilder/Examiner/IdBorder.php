@@ -48,7 +48,6 @@ class IdBorder {
 	 * @param array $params
 	 */
 	public function check( array $params = [] ) {
-
 		if ( !isset( $params[self::UPPER_BOUND] ) ) {
 			throw new RuntimeException( "Missing an upper bound!" );
 		}
@@ -68,10 +67,9 @@ class IdBorder {
 	}
 
 	private function findAndMove( $upperbound, $legacyBound ) {
-
 		$cliMsgFormatter = new CliMsgFormatter();
 
-		$connection = $this->store->getConnection( DB_MASTER );
+		$connection = $this->store->getConnection( DB_PRIMARY );
 		$row = false;
 		$hasUpperBound = false;
 
@@ -141,7 +139,6 @@ class IdBorder {
 	}
 
 	private function move( $old, $new ) {
-
 		$cliMsgFormatter = new CliMsgFormatter();
 
 		$this->messageReporter->reportMessage(

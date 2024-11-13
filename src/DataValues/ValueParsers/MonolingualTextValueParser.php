@@ -11,6 +11,7 @@ use SMW\Localizer;
  * @since 2.4
  *
  * @author mwjames
+ * @reviewer thomas-topway-it
  */
 class MonolingualTextValueParser implements ValueParser {
 
@@ -36,7 +37,6 @@ class MonolingualTextValueParser implements ValueParser {
 	 * @return array
 	 */
 	public function parse( $userValue ) {
-
 		// Allow things like [ "en" => "Foo ..." ] when retrieved from a JSON string
 		if ( is_array( $userValue ) ) {
 			foreach ( $userValue as $key => $value ) {
@@ -53,7 +53,12 @@ class MonolingualTextValueParser implements ValueParser {
 			}
 		}
 
-		return [ $text, Localizer::asBCP47FormattedLanguageCode( $languageCode ) ];
+		$languageCode = Localizer::asBCP47FormattedLanguageCode( $languageCode );
+		$nonstandardLanguageCodeMapping = \LanguageCode::getNonstandardLanguageCodeMapping();
+
+		$mappedLanguageCode = array_search( $languageCode, $nonstandardLanguageCodeMapping ) ?: $languageCode;
+
+		return [ $text, $mappedLanguageCode ];
 	}
 
 }

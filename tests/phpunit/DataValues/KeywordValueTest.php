@@ -27,7 +27,7 @@ class KeywordValueTest extends \PHPUnit_Framework_TestCase {
 	private $propertySpecificationLookup;
 	private $dataValueServiceFactory;
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->testEnvironment = new TestEnvironment();
@@ -64,12 +64,11 @@ class KeywordValueTest extends \PHPUnit_Framework_TestCase {
 		$this->testEnvironment->registerObject( 'PropertySpecificationLookup', $this->propertySpecificationLookup );
 	}
 
-	protected function tearDown() : void {
+	protected function tearDown(): void {
 		$this->testEnvironment->tearDown();
 	}
 
 	public function testCanConstruct() {
-
 		$this->assertInstanceOf(
 			KeywordValue::class,
 			new KeywordValue()
@@ -77,7 +76,6 @@ class KeywordValueTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testErrorWhenLengthExceedsLimit() {
-
 		$this->propertySpecificationLookup->expects( $this->any() )
 			->method( 'getSpecification' )
 			->will( $this->returnValue( [] ) );
@@ -95,12 +93,11 @@ class KeywordValueTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertContains(
 			'smw-datavalue-keyword-maximum-length',
-			implode( ', ',  $instance->getErrors() )
+			implode( ', ', $instance->getErrors() )
 		);
 	}
 
 	public function testGetShortWikiText_WithoutLink() {
-
 		$this->propertySpecificationLookup->expects( $this->any() )
 			->method( 'getSpecification' )
 			->will( $this->returnValue( [] ) );
@@ -123,7 +120,6 @@ class KeywordValueTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetShortWikiText_WithLink() {
-
 		$data = json_encode(
 			[
 				'type' => 'LINK_FORMAT_SCHEMA',
@@ -131,19 +127,22 @@ class KeywordValueTest extends \PHPUnit_Framework_TestCase {
 			]
 		);
 
-		$this->propertySpecificationLookup->expects( $this->at( 0 ) )
+		$this->propertySpecificationLookup->expects( $this->exactly( 2 ) )
 			->method( 'getSpecification' )
-			->with(
-				$this->anything(),
-				$this->equalTo( $this->dataItemFactory->newDIProperty( '_FORMAT_SCHEMA' ) ) )
-			->will( $this->returnValue( [ $this->dataItemFactory->newDIWikiPage( 'Bar', SMW_NS_SCHEMA ) ] ) );
-
-		$this->propertySpecificationLookup->expects( $this->at( 1 ) )
-			->method( 'getSpecification' )
-			->with(
-				$this->anything(),
-				$this->equalTo( $this->dataItemFactory->newDIProperty( '_SCHEMA_DEF' ) ) )
-			->will( $this->returnValue( [ $this->dataItemFactory->newDIBlob( $data ) ] ) );
+			->withConsecutive(
+				[
+					$this->anything(),
+					$this->equalTo( $this->dataItemFactory->newDIProperty( '_FORMAT_SCHEMA' ) )
+				],
+				[
+					$this->anything(),
+					$this->equalTo( $this->dataItemFactory->newDIProperty( '_SCHEMA_DEF' ) )
+				]
+			)
+			->willReturnOnConsecutiveCalls(
+				[ $this->dataItemFactory->newDIWikiPage( 'Bar', SMW_NS_SCHEMA ) ],
+				[ $this->dataItemFactory->newDIBlob( $data ) ]
+			);
 
 		$instance = new KeywordValue();
 		$instance->setDataValueServiceFactory( $this->dataValueServiceFactory );
@@ -163,4 +162,47 @@ class KeywordValueTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
+	public function testGetShortWikiText_WithoutLinkFormatting() {
+		// inverse testing - this test ensures that when link formatting is disabled, the output is not formatted as a link
+		$data = json_encode(
+			[
+				'type' => 'LINK_FORMAT_SCHEMA',
+				'rule' => [ 'link_to' => 'SPECIAL_SEARCH_BY_PROPERTY' ]
+			]
+		);
+	
+		$this->propertySpecificationLookup->expects( $this->exactly( 2 ) )
+			->method( 'getSpecification' )
+			->withConsecutive(
+				[
+					$this->anything(),
+					$this->equalTo( $this->dataItemFactory->newDIProperty( '_FORMAT_SCHEMA' ) )
+				],
+				[
+					$this->anything(),
+					$this->equalTo( $this->dataItemFactory->newDIProperty( '_SCHEMA_DEF' ) )
+				]
+			)
+			->willReturnOnConsecutiveCalls(
+				[ $this->dataItemFactory->newDIWikiPage( 'Bar', SMW_NS_SCHEMA ) ],
+				[ $this->dataItemFactory->newDIBlob( $data ) ]
+			);
+	
+		$instance = new KeywordValue();
+		$instance->setDataValueServiceFactory( $this->dataValueServiceFactory );
+		$instance->setOption( KeywordValue::OPT_COMPACT_INFOLINKS, false );
+	
+		$instance->setUserValue( 'foo' );
+		$instance->setProperty( $this->dataItemFactory->newDIProperty( 'Bar' ) );
+	
+		$this->assertEquals(
+			'foo',
+			$instance->getShortWikiText()
+		);
+	
+		$this->assertNotContains(
+			'[[:Special:SearchByProperty/cl:OkJhci9mb28|foo]]',
+			$instance->getShortWikiText( 'linker' )
+		);
+	}
 }

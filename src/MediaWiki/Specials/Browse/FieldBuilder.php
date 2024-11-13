@@ -29,7 +29,6 @@ class FieldBuilder {
 	 * @return string
 	 */
 	public static function createQueryForm( $articletext = '', $lang = Message::USER_LANGUAGE ) {
-
 		$title = SpecialPage::getTitleFor( 'Browse' );
 
 		if ( $lang !== Message::USER_LANGUAGE ) {
@@ -38,7 +37,7 @@ class FieldBuilder {
 			$dir = $title->getPageLanguage()->isRTL() ? 'rtl' : 'ltr';
 		}
 
-		$html = "<div class=\"smwb-form\">". Html::rawElement(
+		$html = "<div class=\"smwb-form\">" . Html::rawElement(
 			'div',
 			[ 'style' => 'margin-top:15px;' ],
 			''
@@ -114,7 +113,6 @@ class FieldBuilder {
 	 * @return string
 	 */
 	public static function createLink( $linkMsg, array $parameters, $lang = Message::USER_LANGUAGE ) {
-
 		$title = SpecialPage::getSafeTitleFor( 'Browse' );
 		$fragment = $linkMsg === 'smw_browse_show_incoming' ? '#smw_browse_incoming' : '';
 

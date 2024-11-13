@@ -2,6 +2,7 @@
 
 namespace SMW\Protection;
 
+use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use RequestContext;
@@ -97,7 +98,6 @@ class EditProtectionUpdater implements LoggerAwareInterface {
 	 * @param SemanticData $semanticData
 	 */
 	public function doUpdateFrom( SemanticData $semanticData ) {
-
 		// Do nothing
 		if ( $this->editProtectionRight === false ) {
 			return;
@@ -111,7 +111,8 @@ class EditProtectionUpdater implements LoggerAwareInterface {
 			return;
 		}
 
-		$restrictions = array_flip( $title->getRestrictions( 'edit' ) );
+		$restrictionStore = MediaWikiServices::getInstance()->getRestrictionStore();
+		$restrictions = array_flip( $restrictionStore->getRestrictions( $title, 'edit' ) );
 
 		// No `Is edit protected` was found and the restriction doesn't contain
 		// a matchable `editProtectionRight`
@@ -131,7 +132,6 @@ class EditProtectionUpdater implements LoggerAwareInterface {
 	}
 
 	private function fetchEditProtectedInfo( $semanticData ) {
-
 		// Whether or not the update was invoked by the ArticleProtectComplete hook
 		$this->isRestrictedUpdate = $semanticData->getOption( ArticleProtectComplete::RESTRICTED_UPDATE ) === true;
 		$property = new DIProperty( '_EDIP' );
@@ -163,7 +163,6 @@ class EditProtectionUpdater implements LoggerAwareInterface {
 	}
 
 	private function doUpdateRestrictions( $isEditProtected ) {
-
 		$protections = [];
 		$expiry = [];
 
@@ -198,7 +197,6 @@ class EditProtectionUpdater implements LoggerAwareInterface {
 	}
 
 	private function log( $message, $context = [] ) {
-
 		if ( $this->logger === null ) {
 			return;
 		}

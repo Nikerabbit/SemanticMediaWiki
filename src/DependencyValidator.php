@@ -46,6 +46,11 @@ class DependencyValidator {
 	private $eTag;
 
 	/**
+	 * @var array $titles Title IDs marked as having outdated dependencies.
+	 */
+	private static $titles = [];
+
+	/**
 	 * @since 3.1
 	 *
 	 * @param NamespaceExaminer $namespaceExaminer
@@ -94,7 +99,7 @@ class DependencyValidator {
 	 * @param Title $title
 	 */
 	public function markTitle( Title $title ) {
-		$title->smwLikelyOutdatedDependencies = true;
+		self::$titles[$title->getPrefixedText()] = true;
 	}
 
 	/**
@@ -104,8 +109,8 @@ class DependencyValidator {
 	 *
 	 * @return boolean
 	 */
-	public static function hasLikelyOutdatedDependencies( Title $title ) {
-		return isset( $title->smwLikelyOutdatedDependencies ) && $title->smwLikelyOutdatedDependencies;
+	public static function hasLikelyOutdatedDependencies( Title $title ): bool {
+		return self::$titles[$title->getPrefixedText()] ?? false;
 	}
 
 	/**
@@ -116,7 +121,6 @@ class DependencyValidator {
 	 * @return boolean
 	 */
 	public function hasArchaicDependencies( DIWikiPage $subject ) {
-
 		$title = $subject->getTitle();
 
 		if ( $this->namespaceExaminer->isSemanticEnabled( $title->getNamespace() ) === false ) {
@@ -159,7 +163,6 @@ class DependencyValidator {
 	 * @return boolean
 	 */
 	public function canKeepParserCache( DIWikiPage $subject ) {
-
 		$key = $this->makeCacheKey( $subject->getTitle() );
 
 		// Test for a recent rejection, being unrelated etc.

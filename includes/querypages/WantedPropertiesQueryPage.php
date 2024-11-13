@@ -83,7 +83,6 @@ class WantedPropertiesQueryPage extends QueryPage {
 	 * @return string
 	 */
 	public function getCacheInfo() {
-
 		if ( $this->listLookup->isFromCache() ) {
 			return $this->msg( 'smw-sp-properties-cache-info', $this->getLanguage()->userTimeAndDate( $this->listLookup->getTimestamp(), $this->getUser() ) )->parse();
 		}
@@ -96,7 +95,6 @@ class WantedPropertiesQueryPage extends QueryPage {
 	 * @return string
 	 */
 	function getPageHeader() {
-
 		$filer = $this->getRequest()->getVal( 'filter', '' );
 
 		if ( $filer !== 'unapprove' ) {
@@ -135,7 +133,7 @@ class WantedPropertiesQueryPage extends QueryPage {
 			'p',
 			[ 'class' => 'smw-wantedproperties-docu plainlinks' ],
 			$this->msg( 'smw-special-wantedproperties-docu' )->parse()
-		) . $this->getSearchForm( $this->getRequest()->getVal( 'property', '' ), $this->getCacheInfo(), false, $filter )  .
+		) . $this->getSearchForm( $this->getRequest()->getVal( 'property', '' ), $this->getCacheInfo(), false, $filter ) .
 		Html::element(
 			'h2',
 			[],

@@ -58,7 +58,7 @@ class Table {
 	 *
 	 * @return boolean
 	 */
-	public function isCoreTable() : bool {
+	public function isCoreTable(): bool {
 		return $this->isCoreTable;
 	}
 
@@ -88,7 +88,6 @@ class Table {
 	 * @param mixed
 	 */
 	public function get( $key ) {
-
 		if ( !isset( $this->attributes[$key] ) ) {
 			throw new RuntimeException( "$key is a reserved option key." );
 		}
@@ -122,10 +121,9 @@ class Table {
 	 * @param string|null $key
 	 */
 	public function addIndex( $index, $key = null ) {
-
 		$val = is_array( $index ) ? $index[0] : $index;
 
-		if ( count( explode( ' ', $val ) ) > 1 ) {
+		if ( count( explode( ' ', $val ?? '' ) ) > 1 ) {
 			throw new RuntimeException( "Index declaration `$val` contains a space!." );
 		}
 
@@ -155,7 +153,6 @@ class Table {
 	 * @throws RuntimeException
 	 */
 	public function addOption( $key, $option ) {
-
 		if ( in_array( $key, [ self::TYPE_FIELDS, self::TYPE_INDICES, self::TYPE_DEFAULTS ] ) ) {
 			throw new RuntimeException( "$key is a reserved option key." );
 		}

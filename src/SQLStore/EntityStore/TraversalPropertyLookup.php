@@ -10,6 +10,7 @@ use SMW\RequestOptions;
 use SMW\SQLStore\PropertyTableDefinition as PropertyTableDef;
 use SMW\SQLStore\SQLStore;
 use SMWDataItem as DataItem;
+use Wikimedia\Rdbms\Subquery;
 
 /**
  * @license GNU GPL v2
@@ -41,7 +42,6 @@ class TraversalPropertyLookup {
 	 * {@inheritDoc}
 	 */
 	public function fetchFromTable( PropertyTableDef $propertyTableDef, DataItem $dataItem, RequestOptions $requestOptions = null ) {
-
 		$connection = $this->store->getConnection( 'mw.db' );
 
 		if ( $dataItem instanceof DIContainer ) {
@@ -80,10 +80,11 @@ class TraversalPropertyLookup {
 
 			// Use a subquery to match all possible IDs, no ORDER BY or DISTINCT to avoid
 			// a filesort
-			$from = $connection->tableName( SQLStore::ID_TABLE ) .
-				" INNER JOIN (" .
-				" SELECT p_id FROM " . $connection->tableName( $propertyTableDef->getName() ) .
-				" $cond $opt ) AS t1 ON t1.p_id=smw_id";
+			$from = [
+				SQLStore::ID_TABLE,
+				't1' => new Subquery( 'SELECT p_id FROM ' . $connection->tableName( $propertyTableDef->getName() ) . " $cond $opt" ),
+			];
+			$join = [ 't1' => [ 'INNER JOIN', 't1.p_id=smw_id' ] ];
 
 			$conditions .= ( $conditions ? ' AND ' : ' ' ) .
 				" smw_iw!=" . $connection->addQuotes( SMW_SQL3_SMWIW_OUTDATED ) .
@@ -95,19 +96,19 @@ class TraversalPropertyLookup {
 
 			$result = $connection->select(
 				$from,
-				' smw_title,smw_sortkey,smw_iw',
+				[ 'smw_title', 'smw_sortkey', 'smw_iw' ],
 				$conditions,
 				__METHOD__,
-				$options
+				$options,
+				$join
 			);
 
 		} else {
-			$from = $connection->tableName( $propertyTableDef->getName() ) . " AS t1";
 			$where = $this->getWhereConds( $dataItem );
 			$fields = $propertyTableDef->usesIdSubject() ? 's_id' : '*';
 
 			$result = $connection->select(
-				$from,
+				[ 't1' => $propertyTableDef->getName() ],
 				$fields,
 				$where,
 				__METHOD__,
@@ -125,7 +126,6 @@ class TraversalPropertyLookup {
 	}
 
 	private function getWhereConds( $dataItem ) {
-
 		$where = '';
 		$connection = $this->store->getConnection( 'mw.db' );
 

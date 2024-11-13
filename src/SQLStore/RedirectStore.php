@@ -112,7 +112,6 @@ class RedirectStore {
 	 * @return integer
 	 */
 	public function findRedirect( $title, $namespace ) {
-
 		$hash = $this->makeHash(
 			$title,
 			$namespace
@@ -137,7 +136,6 @@ class RedirectStore {
 	 * @param integer $namespace
 	 */
 	public function addRedirect( $id, $title, $namespace ) {
-
 		$this->insert( $id, $title, $namespace );
 
 		$hash = $this->makeHash(
@@ -156,7 +154,6 @@ class RedirectStore {
 	 * @param integer $namespace
 	 */
 	public function updateRedirect( $id, $title, $namespace ) {
-
 		$this->deleteRedirect( $title, $namespace );
 
 		if ( !$this->canCreateUpdateJobs() || $this->equalitySupport->is( SMW_EQ_NONE ) ) {
@@ -177,21 +174,24 @@ class RedirectStore {
 			}
 
 			$query = [
-				'from' => '',
-				'fields' => ''
+				'from' => [],
+				'fields' => [],
+				'condition' => [],
+				'options' => [],
+				'join' => [],
 			];
 
 			$query['condition'] = [ 'p_id' => $id ];
 
+			$query['from'] = [ $proptable->getName() ];
 			if ( $proptable->usesIdSubject() ) {
-				$query['from'] .= $connection->tableName( $proptable->getName() );
-				$query['from'] .= ' INNER JOIN ';
-				$query['from'] .= $connection->tableName( SQLStore::ID_TABLE ) . ' ON s_id=smw_id';
-				$query['fields'] = 'DISTINCT smw_title AS t,smw_namespace AS ns';
+				$query['from'][] = SQLStore::ID_TABLE;
+				$query['join'] = [ SQLStore::ID_TABLE => [ 'INNER JOIN', 's_id=smw_id' ] ];
+				$query['fields'] = [ 't' => 'smw_title', 'ns' => 'smw_namespace' ];
 			} else {
-				$query['from'] = $connection->tableName( $proptable->getName() );
-				$query['fields'] = 'DISTINCT s_title AS t,s_namespace AS ns';
+				$query['fields'] = [ 't' => 's_title', 'ns' => 's_namespace' ];
 			}
+			$query['options'] = [ 'DISTINCT' ];
 
 			if ( $namespace === SMW_NS_PROPERTY && !$proptable->isFixedPropertyTable() ) {
 				$this->findUpdateJobs( $connection, $query, $jobs );
@@ -238,7 +238,6 @@ class RedirectStore {
 	 * @param integer $namespace
 	 */
 	public function deleteRedirect( $title, $namespace ) {
-
 		$this->delete( $title, $namespace );
 
 		$hash = $this->makeHash(
@@ -250,7 +249,6 @@ class RedirectStore {
 	}
 
 	private function select( $title, $namespace ) {
-
 		$connection = $this->store->getConnection( 'mw.db' );
 
 		$row = $connection->selectRow(
@@ -267,7 +265,6 @@ class RedirectStore {
 	}
 
 	private function insert( $id, $title, $namespace ) {
-
 		$connection = $this->store->getConnection( 'mw.db' );
 
 		$row = $connection->selectRow(
@@ -303,7 +300,6 @@ class RedirectStore {
 	}
 
 	private function delete( $title, $namespace ) {
-
 		$connection = $this->store->getConnection( 'mw.db' );
 
 		$connection->delete(
@@ -320,12 +316,13 @@ class RedirectStore {
 	}
 
 	private function findUpdateJobs( $connection, $query, &$jobs ) {
-
 		$res = $connection->select(
 			$query['from'],
 			$query['fields'],
 			$query['condition'],
-			__METHOD__
+			__METHOD__,
+			$query['options'],
+			$query['join']
 		);
 
 		foreach ( $res as $row ) {

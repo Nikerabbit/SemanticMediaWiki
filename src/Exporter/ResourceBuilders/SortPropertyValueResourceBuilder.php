@@ -33,7 +33,6 @@ class SortPropertyValueResourceBuilder extends PredefinedPropertyValueResourceBu
 		return $property->getKey() === '_SKEY';
 	}
 
-
 	/**
 	 * @since 3.0
 	 *
@@ -49,7 +48,6 @@ class SortPropertyValueResourceBuilder extends PredefinedPropertyValueResourceBu
 	 * {@inheritDoc}
 	 */
 	public function addResourceValue( ExpData $expData, DIProperty $property, DataItem $dataItem ) {
-
 		if ( !$dataItem instanceof DIBlob ) {
 			$dataItem = new DIBlob( $dataItem->getSortKey() );
 		}

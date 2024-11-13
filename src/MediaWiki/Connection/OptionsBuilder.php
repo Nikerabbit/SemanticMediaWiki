@@ -2,6 +2,8 @@
 
 namespace SMW\MediaWiki\Connection;
 
+use Wikimedia\Rdbms\Platform\SQLPlatform;
+
 /**
  * https://phabricator.wikimedia.org/T147550
  *
@@ -21,7 +23,6 @@ class OptionsBuilder {
 	 * @return string
 	 */
 	public static function toString( array $options ) {
-
 		$string = '';
 
 		if ( isset( $options['GROUP BY'] ) ) {
@@ -42,7 +43,7 @@ class OptionsBuilder {
 	}
 
 	/**
-	 * @see Database::makeSelectOptions
+	 * @see SQLPlatform::makeSelectOptions
 	 */
 	public static function makeSelectOptions( Database $connection, $options ) {
 		$preLimitTail = $postLimitTail = '';

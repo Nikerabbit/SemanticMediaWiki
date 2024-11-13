@@ -21,7 +21,7 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	private $connection;
 	private $messageReporter;
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->titleFactory = $this->getMockBuilder( '\SMW\MediaWiki\TitleFactory' )
@@ -38,7 +38,6 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCanConstruct() {
-
 		$this->assertInstanceOf(
 			'\SMW\Importer\ContentCreators\TextContentCreator',
 			new TextContentCreator( $this->titleFactory, $this->connection )
@@ -46,7 +45,6 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCanCreateContentsFor() {
-
 		$instance = new TextContentCreator(
 			$this->titleFactory,
 			$this->connection
@@ -61,16 +59,21 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCreate() {
-
 		$this->connection->expects( $this->once() )
 			->method( 'onTransactionCommitOrIdle' )
-			->will( $this->returnCallback( function( $callback ) {
+			->will( $this->returnCallback( function ( $callback ) {
 				return call_user_func( $callback ); }
 			) );
 
-		$status = $this->getMockBuilder( '\Status' )
+		if ( version_compare( MW_VERSION, '1.40', '<' ) ) {
+			$status = $this->getMockBuilder( '\Status' )
 			->disableOriginalConstructor()
 			->getMock();
+		} else {
+			$status = $this->getMockBuilder( '\MediaWiki\Storage\PageUpdateStatus' )
+			->disableOriginalConstructor()
+			->getMock();
+		}
 
 		$status->expects( $this->any() )
 			->method( 'isOK' )
@@ -121,17 +124,22 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCreate_WithError() {
-
 		$this->connection->expects( $this->once() )
 			->method( 'onTransactionCommitOrIdle' )
-			->will( $this->returnCallback( function( $callback ) {
+			->will( $this->returnCallback( function ( $callback ) {
 				return call_user_func( $callback ); }
 			) );
 
-		$status = $this->getMockBuilder( '\Status' )
+		if ( version_compare( MW_VERSION, '1.40', '<' ) ) {
+			$status = $this->getMockBuilder( '\Status' )
 			->disableOriginalConstructor()
 			->getMock();
-
+		} else {
+			$status = $this->getMockBuilder( '\MediaWiki\Storage\PageUpdateStatus' )
+			->disableOriginalConstructor()
+			->getMock();
+		}
+	
 		$status->expects( $this->any() )
 			->method( 'isOK' )
 			->will( $this->returnValue( false ) );
@@ -190,7 +198,6 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCreate_NotReplaceable() {
-
 		$this->connection->expects( $this->never() )
 			->method( 'onTransactionCommitOrIdle' );
 
@@ -235,17 +242,22 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCreate_ReplaceableOnCreator() {
-
 		$this->connection->expects( $this->once() )
 			->method( 'onTransactionCommitOrIdle' )
-			->will( $this->returnCallback( function( $callback ) {
+			->will( $this->returnCallback( function ( $callback ) {
 				return call_user_func( $callback ); }
 			) );
 
-		$status = $this->getMockBuilder( '\Status' )
+		if ( version_compare( MW_VERSION, '1.40', '<' ) ) {
+			$status = $this->getMockBuilder( '\Status' )
 			->disableOriginalConstructor()
 			->getMock();
-
+		} else {
+			$status = $this->getMockBuilder( '\MediaWiki\Storage\PageUpdateStatus' )
+			->disableOriginalConstructor()
+			->getMock();
+		}
+	
 		$status->expects( $this->any() )
 			->method( 'isOK' )
 			->will( $this->returnValue( true ) );
@@ -312,17 +324,22 @@ class TextContentCreatorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testCreate_ReplaceableOnCreator_WithNoAvailableUser() {
-
 		$this->connection->expects( $this->once() )
 			->method( 'onTransactionCommitOrIdle' )
-			->will( $this->returnCallback( function( $callback ) {
+			->will( $this->returnCallback( function ( $callback ) {
 				return call_user_func( $callback ); }
 			) );
 
-		$status = $this->getMockBuilder( '\Status' )
+		if ( version_compare( MW_VERSION, '1.40', '<' ) ) {
+			$status = $this->getMockBuilder( '\Status' )
 			->disableOriginalConstructor()
 			->getMock();
-
+		} else {
+			$status = $this->getMockBuilder( '\MediaWiki\Storage\PageUpdateStatus' )
+			->disableOriginalConstructor()
+			->getMock();
+		}
+	
 		$status->expects( $this->any() )
 			->method( 'isOK' )
 			->will( $this->returnValue( true ) );

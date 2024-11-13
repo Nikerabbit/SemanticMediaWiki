@@ -41,7 +41,6 @@ class Settings extends Options {
 	 * @throws SettingsAlreadyLoadedException
 	 */
 	public function loadFromGlobals() {
-
 		// This function is never expected to be called more than once per active
 		// instance which should only happen via the service factory, yet, if
 		// someone attempted to call this function then we want to know by what
@@ -210,7 +209,8 @@ class Settings extends Options {
 			'smwgCheckForConstraintErrors' => $GLOBALS['smwgCheckForConstraintErrors'],
 			'smwgPlainList' => $GLOBALS['smwgPlainList'],
 			'smwgDetectOutdatedData' => $GLOBALS['smwgDetectOutdatedData'],
-		];
+			'smwgIgnoreUpgradeKeyCheck' => $GLOBALS['smwgIgnoreUpgradeKeyCheck']
+ 		];
 
 		$this->isLoaded = true;
 
@@ -249,7 +249,6 @@ class Settings extends Options {
 	 * {@inheritDoc}
 	 */
 	public function set( $key, $value ) {
-
 		foreach ( $this->getChangeListeners() as $changeListener ) {
 
 			if ( !$changeListener->canTrigger( $key ) ) {
@@ -272,7 +271,6 @@ class Settings extends Options {
 	 * @throws SettingNotFoundException
 	 */
 	public function get( $key ) {
-
 		if ( $this->has( $key ) ) {
 			return parent::get( $key );
 		}
@@ -289,7 +287,6 @@ class Settings extends Options {
 	 * @return mixed
 	 */
 	public function safeGet( $key, $default = false ) {
-
 		try {
 			$r = $this->get( $key );
 		} catch ( SettingNotFoundException $e ) {
@@ -309,7 +306,6 @@ class Settings extends Options {
 	 * @throws RuntimeException
 	 */
 	public function mung( string $key, $mung ) {
-
 		if ( is_string( $mung ) ) {
 			return (string)$this->get( $key ) . $mung;
 		}
