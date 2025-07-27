@@ -5,18 +5,18 @@ namespace SMW\SPARQLStore;
 use MediaWiki\MediaWikiServices;
 use SMW\DIProperty;
 use SMW\DIWikiPage;
+use SMW\Exporter\Element\ExpNsResource;
+use SMW\Exporter\Serializer\TurtleSerializer;
+use SMW\Options;
 use SMW\SemanticData;
 use SMW\SPARQLStore\Exception\HttpEndpointConnectionException;
 use SMW\SQLStore\Rebuilder\Rebuilder;
 use SMW\Store;
+use SMW\Utils\CliMsgFormatter;
 use SMWDataItem as DataItem;
-use SMWExpNsResource as ExpNsResource;
 use SMWExporter as Exporter;
 use SMWQuery as Query;
-use SMWTurtleSerializer as TurtleSerializer;
 use Title;
-use SMW\Utils\CliMsgFormatter;
-use SMW\Options;
 
 /**
  * Storage and query access point for a SPARQL supported RepositoryConnector to
@@ -26,7 +26,7 @@ use SMW\Options;
  * yet modelled and supported by a RepositoryConnector, which may become optional
  * in future.
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 1.6
  *
  * @author Markus Krötzsch
@@ -46,11 +46,11 @@ class SPARQLStore extends Store {
 	 * @since 1.8
 	 * @var string
 	 */
-	static public $baseStoreClass = 'SMWSQLStore3';
+	public static $baseStoreClass = '\SMW\SQLStore\SQLStore';
 
 	/**
 	 * Underlying store to use for basic read operations.
-  	 * Public since 5.0. (https://github.com/SemanticMediaWiki/SemanticMediaWiki/pull/5749)
+	 * Public since 5.0. (https://github.com/SemanticMediaWiki/SemanticMediaWiki/pull/5749)
 	 *
 	 * @since 1.8
 	 * @var Store
@@ -60,9 +60,9 @@ class SPARQLStore extends Store {
 	/**
 	 * @since 1.8
 	 *
-	 * @param Store $baseStore
+	 * @param Store|null $baseStore
 	 */
-	public function __construct( Store $baseStore = null ) {
+	public function __construct( ?Store $baseStore = null ) {
 		$this->factory = new SPARQLStoreFactory( $this );
 		$this->baseStore = $baseStore;
 
@@ -208,7 +208,7 @@ class SPARQLStore extends Store {
 			$this->doSparqlFlatDataUpdate( $subSemanticData, $turtleTriplesBuilder );
 		}
 
-		//wfDebugLog( 'smw', ' InMemoryPoolCache: ' . json_encode( \SMW\InMemoryPoolCache::getInstance()->getStats() ) );
+		// wfDebugLog( 'smw', ' InMemoryPoolCache: ' . json_encode( \SMW\InMemoryPoolCache::getInstance()->getStats() ) );
 
 		// Reset internal cache
 		$turtleTriplesBuilder->reset();
@@ -254,19 +254,20 @@ class SPARQLStore extends Store {
 	 *
 	 * @param DataItem $dataItem
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function doSparqlDataDelete( DataItem $dataItem ) {
 		$extraNamespaces = [];
+		$exporter = Exporter::getInstance();
 
-		$expResource = Exporter::getInstance()->newExpElement( $dataItem );
+		$expResource = $exporter->newExpElement( $dataItem );
 		$resourceUri = TurtleSerializer::getTurtleNameForExpElement( $expResource );
 
 		if ( $expResource instanceof ExpNsResource ) {
 			$extraNamespaces = [ $expResource->getNamespaceId() => $expResource->getNamespace() ];
 		}
 
-		$masterPageProperty = Exporter::getInstance()->getSpecialNsResource( 'swivt', 'masterPage' );
+		$masterPageProperty = $exporter->newExpNsResourceById( 'swivt', 'masterPage' );
 		$masterPagePropertyUri = TurtleSerializer::getTurtleNameForExpElement( $masterPageProperty );
 
 		$success = $this->getConnection()->deleteContentByValue( $masterPagePropertyUri, $resourceUri, $extraNamespaces );
@@ -490,7 +491,7 @@ class SPARQLStore extends Store {
 		$repositoryClient = $respositoryConnetion->getRepositoryClient();
 
 		if ( $type === 'store' ) {
-			return [ 'SMWSPARQLStore', $repositoryClient->getName() ];
+			return [ 'SPARQLStore', $repositoryClient->getName() ];
 		}
 
 		$connection = $this->getConnection( 'mw.db' );
@@ -500,7 +501,7 @@ class SPARQLStore extends Store {
 		}
 
 		return [
-			'SMWSPARQLStore' => $connection->getInfo() + [ $repositoryClient->getName() => $respositoryConnetion->getVersion() ]
+			'SPARQLStore' => $connection->getInfo() + [ $repositoryClient->getName() => $respositoryConnetion->getVersion() ]
 		];
 	}
 

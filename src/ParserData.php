@@ -5,8 +5,8 @@ namespace SMW;
 use ParserOptions;
 use ParserOutput;
 use Psr\Log\LoggerAwareTrait;
+use SMW\Services\ServicesFactory as ApplicationFactory;
 use SMWDataValue as DataValue;
-use SMW\MediaWiki\RevisionGuard;
 use Title;
 
 /**
@@ -15,7 +15,7 @@ use Title;
  * Provides access to a semantic data container that is generated
  * either from the ParserOutput or is a newly created container
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 1.9
  *
  * @author mwjames
@@ -87,7 +87,7 @@ class ParserData {
 	private $errors = [];
 
 	/**
-	 * @var $canCreateUpdateJob
+	 * @var
 	 */
 	private $canCreateUpdateJob = true;
 
@@ -196,9 +196,11 @@ class ParserData {
 	 * @return ParserOptions|null
 	 */
 	public function addExtraParserKey( $key ) {
-		// Looks odd in 1.30 "Saved in parser cache ... idhash:19989-0!canonical!userlang!dateformat!userlang!dateformat!userlang!dateformat!userlang!dateformat and ..."
-		// threfore use the ParserOutput::recordOption instead
-		if ( $key === 'userlang' || $key === 'dateformat' ) {
+		$keysToCache = ApplicationFactory::getInstance()->getSettings()->get( 'smwgSetParserCacheKeys' ) ?? [];
+
+		if ( in_array( $key, $keysToCache ) ) {
+			// Looks odd in 1.30 "Saved in parser cache ... idhash:19989-0!canonical!userlang!dateformat!userlang!dateformat!userlang!dateformat!userlang!dateformat and ..."
+			// therefore use the ParserOutput::recordOption instead
 			$this->parserOutput->recordOption( $key );
 		} elseif ( $this->parserOptions !== null ) {
 			$this->parserOptions->addExtraKey( $key );
@@ -208,7 +210,7 @@ class ParserData {
 	/**
 	 * @since 2.4
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isBlocked() {
 		return $this->hasAnnotationBlock();
@@ -217,7 +219,7 @@ class ParserData {
 	/**
 	 * @since 3.1
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function hasAnnotationBlock() {
 		// ParserOutput::getExtensionData returns null if no value was set for this key
@@ -232,7 +234,7 @@ class ParserData {
 	/**
 	 * @since 3.0
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function canUse() {
 		return !$this->hasAnnotationBlock();
@@ -300,7 +302,7 @@ class ParserData {
 	 *
 	 * @param ParserOutput|null
 	 */
-	public function importFromParserOutput( ParserOutput $parserOutput = null ) {
+	public function importFromParserOutput( ?ParserOutput $parserOutput = null ) {
 		if ( $parserOutput === null ) {
 			return;
 		}
@@ -347,20 +349,14 @@ class ParserData {
 	 * @since 3.0
 	 */
 	public function markParserOutput() {
-		$this->parserOutput->setTimestamp( wfTimestampNow() );
-
-		if ( method_exists( $this->parserOutput, 'setPageProperty' ) ) {
-			$this->parserOutput->setPageProperty(
-				'smw-semanticdata-status',
-				$this->semanticData->getProperties() !== []
-			);
-		} else {
-			// MW < 1.38
-			$this->parserOutput->setProperty(
-				'smw-semanticdata-status',
-				$this->semanticData->getProperties() !== []
-			);
+		if ( ApplicationFactory::getInstance()->getSettings()->get( 'smwgSetParserCacheTimestamp' ) ) {
+			$this->parserOutput->setTimestamp( wfTimestampNow() );
 		}
+
+		$this->parserOutput->setExtensionData(
+			'smw-semanticdata-status',
+			$this->semanticData->getProperties() !== []
+		);
 	}
 
 	/**
@@ -375,17 +371,10 @@ class ParserData {
 	 *
 	 * @param ParserOutput $parserOutput
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function hasSemanticData( ParserOutput $parserOutput ) {
-		if ( method_exists( $parserOutput, 'getPageProperty' ) ) {
-			// T301915
-			return (bool)( $parserOutput->getPageProperty( 'smw-semanticdata-status' ) ?? false );
-		} else {
-			// MW < 1.38
-			return (bool)$parserOutput->getProperty( 'smw-semanticdata-status' );
-		}
-
+		return $parserOutput->getExtensionData( 'smw-semanticdata-status' ) ?? false;
 	}
 
 	/**
@@ -404,7 +393,7 @@ class ParserData {
 	 *
 	 * @since 1.9
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function updateStore( $opts = [] ) {
 		$isDeferrableUpdate = false;

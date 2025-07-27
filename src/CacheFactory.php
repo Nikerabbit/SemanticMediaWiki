@@ -7,11 +7,10 @@ use Onoi\BlobStore\BlobStore;
 use Onoi\Cache\Cache;
 use Onoi\Cache\CacheFactory as OnoiCacheFactory;
 use RuntimeException;
-use Title;
-use WikiMap;
+use SMW\Services\ServicesFactory as ApplicationFactory;
 
 /**
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 2.2
  *
  * @author mwjames
@@ -19,14 +18,14 @@ use WikiMap;
 class CacheFactory {
 
 	/**
-	 * @var string|integer
+	 * @var string|int
 	 */
 	private $mainCacheType;
 
 	/**
 	 * @since 2.2
 	 *
-	 * @param string|integer|null $mainCacheType
+	 * @param string|int|null $mainCacheType
 	 */
 	public function __construct( $mainCacheType = null ) {
 		$this->mainCacheType = $mainCacheType;
@@ -39,7 +38,7 @@ class CacheFactory {
 	/**
 	 * @since 2.2
 	 *
-	 * @return string|integer
+	 * @return string|int
 	 */
 	public function getMainCacheType() {
 		return $this->mainCacheType;
@@ -51,19 +50,28 @@ class CacheFactory {
 	 * @return string
 	 */
 	public static function getCachePrefix() {
+		if ( version_compare( MW_VERSION, '1.40', '<' ) ) {
+			return $GLOBALS['wgCachePrefix'] === false ?
+				\WikiMap::getCurrentWikiId() : $GLOBALS['wgCachePrefix'];
+		}
+
 		return $GLOBALS['wgCachePrefix'] === false ?
-			WikiMap::getCurrentWikiId() : $GLOBALS['wgCachePrefix'];
+			\MediaWiki\WikiMap\WikiMap::getCurrentWikiId() : $GLOBALS['wgCachePrefix'];
 	}
 
 	/**
 	 * @since 2.2
 	 *
-	 * @param Title|integer|string $key
+	 * @param \MediaWiki\Title\Title|\Title|int|string $key
 	 *
 	 * @return string
 	 */
 	public static function getPurgeCacheKey( $key ) {
-		if ( $key instanceof Title ) {
+		if ( version_compare( MW_VERSION, '1.40', '<' ) ) {
+			if ( $key instanceof \Title ) {
+				$key = $key->getArticleID();
+			}
+		} elseif ( $key instanceof \MediaWiki\Title\Title ) {
 			$key = $key->getArticleID();
 		}
 
@@ -89,7 +97,7 @@ class CacheFactory {
 	/**
 	 * @since 2.2
 	 *
-	 * @param integer $cacheSize
+	 * @param int $cacheSize
 	 *
 	 * @return Cache
 	 */
@@ -109,7 +117,7 @@ class CacheFactory {
 	/**
 	 * @since 2.2
 	 *
-	 * @param integer|string $mediaWikiCacheType
+	 * @param int|string|null $mediaWikiCacheType
 	 *
 	 * @return Cache
 	 */
@@ -125,7 +133,7 @@ class CacheFactory {
 	/**
 	 * @since 2.5
 	 *
-	 * @param integer|string $mediaWikiCacheType
+	 * @param int|string|null $mediaWikiCacheType
 	 *
 	 * @return Cache
 	 */
@@ -140,7 +148,7 @@ class CacheFactory {
 	/**
 	 * @since 2.5
 	 *
-	 * @param integer|null $cacheType
+	 * @param int|null $cacheType
 	 *
 	 * @return Cache
 	 */
@@ -156,8 +164,8 @@ class CacheFactory {
 	 * @since 2.4
 	 *
 	 * @param string $namespace
-	 * @param string|integer|null $cacheType
-	 * @param integer $cacheLifetime
+	 * @param string|int|null $cacheType
+	 * @param int $cacheLifetime
 	 *
 	 * @return BlobStore
 	 */

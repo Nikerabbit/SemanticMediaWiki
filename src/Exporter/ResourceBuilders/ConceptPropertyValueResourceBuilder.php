@@ -9,7 +9,7 @@ use SMWExpData as ExpData;
 /**
  * @private
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 2.5
  *
  * @author mwjames
@@ -40,7 +40,7 @@ class ConceptPropertyValueResourceBuilder extends PredefinedPropertyValueResourc
 		}
 
 		foreach ( $expElement->getProperties() as $subp ) {
-			if ( $subp->getUri() != $this->exporter->getSpecialNsResource( 'rdf', 'type' )->getUri() ) {
+			if ( $subp->getUri() != $this->exporter->newExpNsResourceById( 'rdf', 'type' )->getUri() ) {
 				foreach ( $expElement->getValues( $subp ) as $subval ) {
 					$expData->addPropertyObjectValue( $subp, $subval );
 				}

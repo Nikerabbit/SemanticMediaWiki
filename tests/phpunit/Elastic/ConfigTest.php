@@ -9,12 +9,12 @@ use SMW\Tests\PHPUnitCompat;
  * @covers \SMW\Elastic\Config
  * @group semantic-mediawiki
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 3.0
  *
  * @author mwjames
  */
-class ConfigTest extends \PHPUnit_Framework_TestCase {
+class ConfigTest extends \PHPUnit\Framework\TestCase {
 
 	use PHPUnitCompat;
 
@@ -37,7 +37,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
 
 	public function testIsDefaultStore_True() {
 		$instance = new Config(
-			[ Config::DEFAULT_STORE => 'SMWElasticStore' ]
+			[ Config::DEFAULT_STORE => 'SMW\Elastic\ElasticStore' ]
 		);
 
 		$this->assertTrue(
@@ -69,9 +69,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
 			$instance->dotGet( 'foo.foo_bar' )
 		);
 
-		$this->assertEquals(
-			false,
-			$instance->dotGet( 'foo.foo.bar' )
+		$this->assertFalse(
+						$instance->dotGet( 'foo.foo.bar' )
 		);
 	}
 
@@ -87,7 +86,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
 			$instance->dotGet( 'Foo' )
 		);
 
-		$this->assertEquals(
+		$this->assertSame(
 			'456',
 			$instance->dotGet( 'Bar' )
 		);

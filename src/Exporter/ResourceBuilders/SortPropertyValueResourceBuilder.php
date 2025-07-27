@@ -3,16 +3,16 @@
 namespace SMW\Exporter\ResourceBuilders;
 
 use SMW\DIProperty;
+use SMW\Exporter\Element\ExpLiteral;
 use SMW\MediaWiki\Collator;
 use SMWDataItem as DataItem;
 use SMWDIBlob as DIBlob;
 use SMWExpData as ExpData;
-use SMWExpLiteral as ExpLiteral;
 
 /**
  * @private
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 3.0
  *
  * @author mwjames
@@ -20,7 +20,7 @@ use SMWExpLiteral as ExpLiteral;
 class SortPropertyValueResourceBuilder extends PredefinedPropertyValueResourceBuilder {
 
 	/**
-	 * @var boolean
+	 * @var bool
 	 */
 	private $enabledCollationField = false;
 
@@ -36,7 +36,7 @@ class SortPropertyValueResourceBuilder extends PredefinedPropertyValueResourceBu
 	/**
 	 * @since 3.0
 	 *
-	 * @param boolean $enabledCollationField
+	 * @param bool $enabledCollationField
 	 */
 	public function enabledCollationField( $enabledCollationField ) {
 		$this->enabledCollationField = (bool)$enabledCollationField;
@@ -63,7 +63,7 @@ class SortPropertyValueResourceBuilder extends PredefinedPropertyValueResourceBu
 		);
 
 		$expData->addPropertyObjectValue(
-			$this->exporter->getSpecialNsResource( 'swivt', 'sort' ),
+			$this->exporter->newExpNsResourceById( 'swivt', 'sort' ),
 			new ExpLiteral(
 				$sort,
 				'http://www.w3.org/2001/XMLSchema#string'

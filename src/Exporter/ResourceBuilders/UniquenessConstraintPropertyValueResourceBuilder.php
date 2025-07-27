@@ -9,7 +9,7 @@ use SMWExpData as ExpData;
 /**
  * @private
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 2.5
  *
  * @author mwjames
@@ -39,8 +39,8 @@ class UniquenessConstraintPropertyValueResourceBuilder extends PropertyValueReso
 		// value y for each instance x ..."
 
 		$expData->addPropertyObjectValue(
-			$this->exporter->getSpecialNsResource( 'rdf', 'type' ),
-			$this->exporter->getSpecialNsResource( 'owl', 'FunctionalProperty' )
+			$this->exporter->newExpNsResourceById( 'rdf', 'type' ),
+			$this->exporter->newExpNsResourceById( 'owl', 'FunctionalProperty' )
 		);
 	}
 

@@ -11,7 +11,7 @@ use SMWExpData as ExpData;
 /**
  * @private
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @since 2.5
  *
  * @author mwjames
@@ -52,7 +52,7 @@ class ExternalIdentifierPropertyValueResourceBuilder extends PropertyValueResour
 
 		if ( $uri instanceof DIUri ) {
 			$expData->addPropertyObjectValue(
-				$this->exporter->getSpecialNsResource( 'skos', 'exactMatch' ),
+				$this->exporter->newExpNsResourceById( 'skos', 'exactMatch' ),
 				$this->exporter->newExpElement( $uri )
 			);
 		}
